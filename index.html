@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Электронный журнал - Школа №1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Базовые стили и сброс */
         * {
@@ -25,6 +26,7 @@
             --accent-red: #e74c3c;
             --accent-green: #2ecc71;
             --accent-yellow: #f39c12;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
 
         body {
@@ -38,10 +40,13 @@
             background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
             color: var(--white);
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -75,12 +80,48 @@
             justify-content: center;
             font-weight: bold;
             color: var(--primary-purple);
+            cursor: pointer;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: var(--white);
+            min-width: 200px;
+            box-shadow: var(--shadow);
+            border-radius: 4px;
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: var(--black);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--light-purple);
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
         }
 
         /* Основная навигация */
         .main-nav {
             background-color: var(--black);
             padding: 0 2rem;
+            position: sticky;
+            top: 72px;
+            z-index: 99;
         }
 
         .nav-links {
@@ -116,10 +157,44 @@
             background-color: var(--light-gray);
             padding: 1.5rem;
             border-right: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+            padding: 1rem 0.5rem;
+        }
+
+        .sidebar.collapsed .sidebar-section h3,
+        .sidebar.collapsed .sidebar-links a span:not(.icon) {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-links a {
+            justify-content: center;
+            padding: 0.75rem;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            background: var(--primary-purple);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
         }
 
         .sidebar-section {
             margin-bottom: 2rem;
+            position: relative;
         }
 
         .sidebar-section h3 {
@@ -141,7 +216,9 @@
         .sidebar-links a {
             color: var(--dark-gray);
             text-decoration: none;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.5rem 0.75rem;
             border-radius: 4px;
             transition: all 0.3s;
@@ -157,11 +234,17 @@
             color: var(--white);
         }
 
+        .sidebar-links .icon {
+            width: 20px;
+            text-align: center;
+        }
+
         /* Основная область */
         .main-content {
             flex: 1;
             padding: 2rem;
             background-color: var(--white);
+            transition: all 0.3s;
         }
 
         .welcome-section {
@@ -177,6 +260,7 @@
             display: flex;
             gap: 1rem;
             margin: 1.5rem 0;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -210,6 +294,15 @@
             background-color: var(--light-purple);
         }
 
+        .btn-danger {
+            background-color: var(--accent-red);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
         /* Карточки */
         .dashboard-grid {
             display: grid;
@@ -220,7 +313,7 @@
         .card {
             background-color: var(--white);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
             border: 1px solid #eee;
             overflow: hidden;
         }
@@ -254,6 +347,7 @@
             padding: 1rem;
             border-bottom: 1px solid #eee;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
 
         .student-item:hover {
@@ -271,6 +365,7 @@
             margin-right: 1rem;
             color: var(--primary-purple);
             font-weight: bold;
+            flex-shrink: 0;
         }
 
         .student-info {
@@ -290,6 +385,7 @@
         .student-stats {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
 
         .avg-grade {
@@ -347,6 +443,7 @@
             padding: 0.5rem;
             border-radius: 4px;
             cursor: pointer;
+            position: relative;
         }
 
         .calendar-day:hover {
@@ -360,10 +457,6 @@
         .calendar-day.today {
             background-color: var(--primary-purple);
             color: white;
-        }
-
-        .calendar-day.event {
-            position: relative;
         }
 
         .calendar-day.event::after {
@@ -399,14 +492,219 @@
             border-left-color: var(--accent-yellow);
         }
 
+        /* Таблицы */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--light-purple);
+            color: var(--primary-purple);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background-color: var(--light-gray);
+        }
+
+        /* Фильтры и поиск */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--medium-gray);
+        }
+
+        .filter-select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            min-width: 150px;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            background-color: var(--light-purple);
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--primary-purple);
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--medium-gray);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary-purple);
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Статистика */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
         /* Адаптивность */
         @media (max-width: 1024px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                width: 200px;
             }
         }
 
@@ -417,11 +715,6 @@
             
             .sidebar {
                 width: 100%;
-                order: 2;
-            }
-            
-            .main-content {
-                order: 1;
             }
             
             .quick-actions {
@@ -430,6 +723,15 @@
             
             .nav-links {
                 flex-wrap: wrap;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
             }
         }
     </style>
@@ -442,7 +744,15 @@
             <h1>Электронный журнал - Школа №1</h1>
         </div>
         <div class="user-menu">
-            <div class="user-avatar">ИИ</div>
+            <div class="user-dropdown">
+                <div class="user-avatar">ИИ</div>
+                <div class="dropdown-content">
+                    <a href="#"><i class="fas fa-user"></i> Мой профиль</a>
+                    <a href="#"><i class="fas fa-cog"></i> Настройки</a>
+                    <a href="#"><i class="fas fa-question-circle"></i> Помощь</a>
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+                </div>
+            </div>
             <span>Иван Иванов (Классный руководитель)</span>
         </div>
     </header>
@@ -450,47 +760,51 @@
     <!-- Основная навигация -->
     <nav class="main-nav">
         <ul class="nav-links">
-            <li><a href="#" class="active">Главная</a></li>
-            <li><a href="#">Учащиеся</a></li>
-            <li><a href="#">Журналы</a></li>
-            <li><a href="#">Отчеты</a></li>
-            <li><a href="#">Расписание</a></li>
-            <li><a href="#">Календарь</a></li>
+            <li><a href="#" class="active"><i class="fas fa-home"></i> Главная</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Учащиеся</a></li>
+            <li><a href="#"><i class="fas fa-book"></i> Журналы</a></li>
+            <li><a href="#"><i class="fas fa-chart-bar"></i> Отчеты</a></li>
+            <li><a href="#"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Администрирование</a></li>
         </ul>
     </nav>
 
     <!-- Основной контент -->
     <div class="container">
         <!-- Боковая панель -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
+            <button class="toggle-sidebar" id="toggleSidebar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
             <div class="sidebar-section">
                 <h3>Мой класс</h3>
                 <ul class="sidebar-links">
-                    <li><a href="#" class="active">10 "А" - Физико-математический</a></li>
-                    <li><a href="#">Список учащихся</a></li>
-                    <li><a href="#">Успеваемость</a></li>
-                    <li><a href="#">Посещаемость</a></li>
-                    <li><a href="#">Родительские собрания</a></li>
+                    <li><a href="#" class="active"><span class="icon"><i class="fas fa-users"></i></span> <span>10 "А" - Физ-мат</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-list"></i></span> <span>Список учащихся</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-chart-line"></i></span> <span>Успеваемость</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-calendar-check"></i></span> <span>Посещаемость</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-user-friends"></i></span> <span>Родители</span></a></li>
                 </ul>
             </div>
             
             <div class="sidebar-section">
                 <h3>Быстрый доступ</h3>
                 <ul class="sidebar-links">
-                    <li><a href="#">Добавить оценку</a></li>
-                    <li><a href="#">Отметить отсутствующих</a></li>
-                    <li><a href="#">Создать отчет</a></li>
-                    <li><a href="#">Написать сообщение</a></li>
+                    <li><a href="#" id="addGradeBtn"><span class="icon"><i class="fas fa-plus"></i></span> <span>Добавить оценку</span></a></li>
+                    <li><a href="#" id="markAbsenceBtn"><span class="icon"><i class="fas fa-user-times"></i></span> <span>Отметить отсутствие</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-file-export"></i></span> <span>Создать отчет</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-envelope"></i></span> <span>Написать сообщение</span></a></li>
                 </ul>
             </div>
             
             <div class="sidebar-section">
                 <h3>Администрирование</h3>
                 <ul class="sidebar-links">
-                    <li><a href="#">Личные дела</a></li>
-                    <li><a href="#">Приказы</a></li>
-                    <li><a href="#">Архив</a></li>
-                    <li><a href="#">Настройки</a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-folder"></i></span> <span>Личные дела</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-file-alt"></i></span> <span>Приказы</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-archive"></i></span> <span>Архив</span></a></li>
+                    <li><a href="#"><span class="icon"><i class="fas fa-sliders-h"></i></span> <span>Настройки</span></a></li>
                 </ul>
             </div>
         </aside>
@@ -502,89 +816,194 @@
                 <p>Ваш класс: <strong>10 "А" - Физико-математический</strong></p>
                 
                 <div class="quick-actions">
-                    <button class="btn btn-primary">
-                        <span>📝</span> Добавить оценку
+                    <button class="btn btn-primary" id="addStudentBtn">
+                        <i class="fas fa-user-plus"></i> Добавить ученика
+                    </button>
+                    <button class="btn btn-outline" id="openJournalBtn">
+                        <i class="fas fa-book"></i> Открыть журнал
                     </button>
                     <button class="btn btn-outline">
-                        <span>👥</span> Отметить отсутствующих
+                        <i class="fas fa-file-export"></i> Экспорт данных
                     </button>
                     <button class="btn btn-outline">
-                        <span>📊</span> Создать отчет
+                        <i class="fas fa-print"></i> Печать отчетов
                     </button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Всего учащихся</div>
+                        <div class="stat-value">25</div>
+                        <div class="stat-detail">10 мальчиков, 15 девочек</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Средний балл</div>
+                        <div class="stat-value">4.2</div>
+                        <div class="stat-detail">+0.3 с прошлой четверти</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Посещаемость</div>
+                        <div class="stat-value">96%</div>
+                        <div class="stat-detail">2% выше среднего по школе</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Нарушители</div>
+                        <div class="stat-value">3</div>
+                        <div class="stat-detail">Требуют внимания</div>
+                    </div>
                 </div>
             </section>
 
-            <div class="dashboard-grid">
-                <!-- Основная колонка -->
-                <div class="main-column">
-                    <!-- Карточка со списком студентов -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Ваш класс (10 "А")</h3>
-                            <span>25 учащихся</span>
-                        </div>
-                        <div class="card-body">
-                            <ul class="student-list">
-                                <li class="student-item">
-                                    <div class="student-avatar">АП</div>
-                                    <div class="student-info">
-                                        <div class="student-name">Петров Алексей</div>
-                                        <div class="student-class">Дата рождения: 15.03.2007</div>
-                                    </div>
-                                    <div class="student-stats">
-                                        <div class="avg-grade grade-good">4.2</div>
-                                        <div class="alert-badge">3</div>
-                                    </div>
-                                </li>
-                                <li class="student-item">
-                                    <div class="student-avatar">МС</div>
-                                    <div class="student-info">
-                                        <div class="student-name">Сидорова Мария</div>
-                                        <div class="student-class">Дата рождения: 22.08.2007</div>
-                                    </div>
-                                    <div class="student-stats">
-                                        <div class="avg-grade grade-good">4.8</div>
-                                    </div>
-                                </li>
-                                <li class="student-item">
-                                    <div class="student-avatar">СИ</div>
-                                    <div class="student-info">
-                                        <div class="student-name">Иванов Сергей</div>
-                                        <div class="student-class">Дата рождения: 10.11.2006</div>
-                                    </div>
-                                    <div class="student-stats">
-                                        <div class="avg-grade grade-bad">3.1</div>
-                                        <div class="alert-badge">5</div>
-                                    </div>
-                                </li>
-                                <li class="student-item">
-                                    <div class="student-avatar">ЕК</div>
-                                    <div class="student-info">
-                                        <div class="student-name">Козлова Елена</div>
-                                        <div class="student-class">Дата рождения: 05.05.2007</div>
-                                    </div>
-                                    <div class="student-stats">
-                                        <div class="avg-grade grade-warning">3.9</div>
-                                    </div>
-                                </li>
-                            </ul>
+            <div class="filters">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchStudents" placeholder="Поиск ученика...">
+                </div>
+                <select class="filter-select" id="filterClass">
+                    <option value="">Все классы</option>
+                    <option value="10A">10 "А"</option>
+                    <option value="10B">10 "Б"</option>
+                    <option value="11A">11 "А"</option>
+                </select>
+                <select class="filter-select" id="filterStatus">
+                    <option value="">Все статусы</option>
+                    <option value="excellent">Отличники</option>
+                    <option value="good">Хорошисты</option>
+                    <option value="satisfactory">Троечники</option>
+                    <option value="problem">Проблемные</option>
+                </select>
+                <button class="btn btn-outline">
+                    <i class="fas fa-filter"></i> Применить фильтры
+                </button>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="students">Учащиеся</div>
+                <div class="tab" data-tab="performance">Успеваемость</div>
+                <div class="tab" data-tab="attendance">Посещаемость</div>
+                <div class="tab" data-tab="events">Мероприятия</div>
+            </div>
+
+            <div class="tab-content active" id="students-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Список учащихся 10 "А" класса</h3>
+                        <span>25 учащихся</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table id="studentsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Ученик</th>
+                                        <th>Дата рождения</th>
+                                        <th>Родитель</th>
+                                        <th>Телефон</th>
+                                        <th>Средний балл</th>
+                                        <th>Статус</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div style="display: flex; align-items: center;">
+                                                <div class="student-avatar">АП</div>
+                                                <div>
+                                                    <div class="student-name">Петров Алексей</div>
+                                                    <div class="student-class">10 "А"</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>15.03.2007</td>
+                                        <td>Петрова М.И.</td>
+                                        <td>+7 (123) 456-78-90</td>
+                                        <td><span class="avg-grade grade-good">4.2</span></td>
+                                        <td><span class="badge" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px;">Отличник</span></td>
+                                        <td>
+                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                                <i class="fas fa-chart-line"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="display: flex; align-items: center;">
+                                                <div class="student-avatar">МС</div>
+                                                <div>
+                                                    <div class="student-name">Сидорова Мария</div>
+                                                    <div class="student-class">10 "А"</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>22.08.2007</td>
+                                        <td>Сидоров А.В.</td>
+                                        <td>+7 (123) 456-78-91</td>
+                                        <td><span class="avg-grade grade-good">4.8</span></td>
+                                        <td><span class="badge" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px;">Отличник</span></td>
+                                        <td>
+                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                                <i class="fas fa-chart-line"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="display: flex; align-items: center;">
+                                                <div class="student-avatar">СИ</div>
+                                                <div>
+                                                    <div class="student-name">Иванов Сергей</div>
+                                                    <div class="student-class">10 "А"</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>10.11.2006</td>
+                                        <td>Иванова О.П.</td>
+                                        <td>+7 (123) 456-78-92</td>
+                                        <td><span class="avg-grade grade-bad">3.1</span></td>
+                                        <td><span class="badge" style="background: #ffebee; color: #c62828; padding: 4px 8px; border-radius: 12px;">Проблемный</span></td>
+                                        <td>
+                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                                <i class="fas fa-chart-line"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Боковая колонка -->
-                <div class="sidebar-column">
+            <div class="dashboard-grid">
+                <div class="main-column">
                     <!-- Карточка с календарем -->
                     <div class="card">
                         <div class="card-header">
-                            <h3>Календарь</h3>
+                            <h3>Календарь событий</h3>
+                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                <i class="fas fa-plus"></i> Добавить
+                            </button>
                         </div>
                         <div class="card-body">
                             <div class="calendar-widget">
                                 <div class="calendar-header">
-                                    <button>&lt;</button>
+                                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
                                     <span>Ноябрь 2023</span>
-                                    <button>&gt;</button>
+                                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
                                 </div>
                                 <div class="calendar-grid">
                                     <!-- Дни недели -->
@@ -633,11 +1052,14 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="sidebar-column">
                     <!-- Карточка с уведомлениями -->
                     <div class="card">
                         <div class="card-header">
                             <h3>Уведомления</h3>
+                            <span class="alert-badge">3</span>
                         </div>
                         <div class="card-body">
                             <ul class="notification-list">
@@ -660,30 +1082,290 @@
                             </ul>
                         </div>
                     </div>
+
+                    <!-- Карточка с быстрыми действиями -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Быстрые действия</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <button class="btn btn-outline" style="justify-content: start;">
+                                    <i class="fas fa-file-medical"></i> Создать отчет об успеваемости
+                                </button>
+                                <button class="btn btn-outline" style="justify-content: start;">
+                                    <i class="fas fa-envelope"></i> Отправить уведомление родителям
+                                </button>
+                                <button class="btn btn-outline" style="justify-content: start;">
+                                    <i class="fas fa-chart-pie"></i> Сформировать статистику
+                                </button>
+                                <button class="btn btn-outline" style="justify-content: start;">
+                                    <i class="fas fa-print"></i> Распечатать ведомость
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Модальное окно добавления ученика -->
+    <div class="modal" id="addStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Добавление нового ученика</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lastName">Фамилия *</label>
+                            <input type="text" id="lastName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">Имя *</label>
+                            <input type="text" id="firstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="middleName">Отчество</label>
+                            <input type="text" id="middleName" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birthDate">Дата рождения *</label>
+                            <input type="date" id="birthDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="class">Класс *</label>
+                            <select id="class" class="form-control" required>
+                                <option value="">Выберите класс</option>
+                                <option value="10A">10 "А"</option>
+                                <option value="10B">10 "Б"</option>
+                                <option value="11A">11 "А"</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Адрес проживания</label>
+                        <input type="text" id="address" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Данные родителей</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="ФИО родителя">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" class="form-control" placeholder="Телефон">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="medicalInfo">Медицинская информация</label>
+                        <textarea id="medicalInfo" class="form-control" rows="3" placeholder="Группа здоровья, аллергии, рекомендации врача"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Отмена</button>
+                <button class="btn btn-primary" id="saveStudentBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления оценки -->
+    <div class="modal" id="addGradeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Добавление оценки</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addGradeForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentSelect">Ученик *</label>
+                            <select id="studentSelect" class="form-control" required>
+                                <option value="">Выберите ученика</option>
+                                <option value="1">Петров Алексей</option>
+                                <option value="2">Сидорова Мария</option>
+                                <option value="3">Иванов Сергей</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subjectSelect">Предмет *</label>
+                            <select id="subjectSelect" class="form-control" required>
+                                <option value="">Выберите предмет</option>
+                                <option value="math">Математика</option>
+                                <option value="physics">Физика</option>
+                                <option value="russian">Русский язык</option>
+                                <option value="literature">Литература</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gradeValue">Оценка *</label>
+                            <select id="gradeValue" class="form-control" required>
+                                <option value="">Выберите оценку</option>
+                                <option value="5">5 (Отлично)</option>
+                                <option value="4">4 (Хорошо)</option>
+                                <option value="3">3 (Удовлетворительно)</option>
+                                <option value="2">2 (Неудовлетворительно)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="gradeDate">Дата оценки *</label>
+                            <input type="date" id="gradeDate" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gradeComment">Комментарий</label>
+                        <textarea id="gradeComment" class="form-control" rows="2" placeholder="Тема урока, тип работы и т.д."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Отмена</button>
+                <button class="btn btn-primary" id="saveGradeBtn">Сохранить оценку</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Простой скрипт для демонстрации интерактивности
+        // Данные для демонстрации
+        const students = [
+            { id: 1, firstName: "Алексей", lastName: "Петров", middleName: "Сергеевич", birthDate: "2007-03-15", class: "10А", avgGrade: 4.2, status: "excellent" },
+            { id: 2, firstName: "Мария", lastName: "Сидорова", middleName: "Александровна", birthDate: "2007-08-22", class: "10А", avgGrade: 4.8, status: "excellent" },
+            { id: 3, firstName: "Сергей", lastName: "Иванов", middleName: "Петрович", birthDate: "2006-11-10", class: "10А", avgGrade: 3.1, status: "problem" }
+        ];
+
+        // Инициализация интерфейса
         document.addEventListener('DOMContentLoaded', function() {
-            // Добавляем обработчики для карточек студентов
-            const studentItems = document.querySelectorAll('.student-item');
-            studentItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    alert('Открывается карточка ученика');
-                    // В реальном приложении здесь будет переход на страницу ученика
+            // Переключение боковой панели
+            const toggleSidebarBtn = document.getElementById('toggleSidebar');
+            const sidebar = document.getElementById('sidebar');
+            
+            toggleSidebarBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                const icon = this.querySelector('i');
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                } else {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-left');
+                }
+            });
+
+            // Управление модальными окнами
+            const modals = document.querySelectorAll('.modal');
+            const openModalBtns = document.querySelectorAll('[data-modal]');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            
+            // Открытие модальных окон
+            document.getElementById('addStudentBtn').addEventListener('click', function() {
+                document.getElementById('addStudentModal').style.display = 'flex';
+            });
+            
+            document.getElementById('addGradeBtn').addEventListener('click', function() {
+                document.getElementById('addGradeModal').style.display = 'flex';
+            });
+            
+            // Закрытие модальных окон
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modals.forEach(modal => {
+                        modal.style.display = 'none';
+                    });
                 });
             });
             
-            // Обработчики для кнопок быстрого доступа
-            const quickActionBtns = document.querySelectorAll('.btn');
-            quickActionBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const btnText = this.textContent.trim();
-                    alert(`Выполняется действие: ${btnText}`);
+            // Закрытие при клике вне модального окна
+            window.addEventListener('click', function(event) {
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
                 });
+            });
+            
+            // Сохранение данных форм
+            document.getElementById('saveStudentBtn').addEventListener('click', function() {
+                const form = document.getElementById('addStudentForm');
+                if (form.checkValidity()) {
+                    alert('Ученик успешно добавлен!');
+                    document.getElementById('addStudentModal').style.display = 'none';
+                    form.reset();
+                } else {
+                    alert('Пожалуйста, заполните все обязательные поля!');
+                }
+            });
+            
+            document.getElementById('saveGradeBtn').addEventListener('click', function() {
+                const form = document.getElementById('addGradeForm');
+                if (form.checkValidity()) {
+                    alert('Оценка успешно добавлена!');
+                    document.getElementById('addGradeModal').style.display = 'none';
+                    form.reset();
+                } else {
+                    alert('Пожалуйста, заполните все обязательные поля!');
+                }
+            });
+            
+            // Переключение вкладок
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Убираем активный класс у всех вкладок и контента
+                    tabs.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Добавляем активный класс текущей вкладке и контенту
+                    this.classList.add('active');
+                    document.getElementById(tabName + '-tab').classList.add('active');
+                });
+            });
+            
+            // Поиск учеников
+            const searchInput = document.getElementById('searchStudents');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#studentsTable tbody tr');
+                
+                rows.forEach(row => {
+                    const studentName = row.querySelector('.student-name').textContent.toLowerCase();
+                    if (studentName.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Открытие журнала
+            document.getElementById('openJournalBtn').addEventListener('click', function() {
+                alert('Открывается электронный журнал...');
+                // В реальном приложении здесь будет переход на страницу журнала
+            });
+            
+            // Отметка отсутствующих
+            document.getElementById('markAbsenceBtn').addEventListener('click', function() {
+                alert('Открывается форма для отметки отсутствующих...');
+                // В реальном приложении здесь будет открытие соответствующей формы
             });
         });
     </script>
