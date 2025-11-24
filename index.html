@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электронный журнал - Школа №1</title>
+    <style>
+        /* Базовые стили и сброс */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-purple: #6a0dad;
+            --dark-purple: #5a0ca0;
+            --light-purple: #f0e6ff;
+            --black: #1a1a1a;
+            --dark-gray: #333;
+            --medium-gray: #666;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --accent-red: #e74c3c;
+            --accent-green: #2ecc71;
+            --accent-yellow: #f39c12;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+        }
+
+        /* Шапка */
+        header {
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+            color: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary-purple);
+        }
+
+        /* Основная навигация */
+        .main-nav {
+            background-color: var(--black);
+            padding: 0 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--primary-purple);
+        }
+
+        /* Основной контент */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Боковая панель */
+        .sidebar {
+            width: 250px;
+            background-color: var(--light-gray);
+            padding: 1.5rem;
+            border-right: 1px solid #ddd;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section h3 {
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-links {
+            list-style: none;
+        }
+
+        .sidebar-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-links a {
+            color: var(--dark-gray);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-links a:hover {
+            background-color: var(--light-purple);
+            color: var(--primary-purple);
+        }
+
+        .sidebar-links a.active {
+            background-color: var(--primary-purple);
+            color: var(--white);
+        }
+
+        /* Основная область */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+        }
+
+        .welcome-section {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h2 {
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-purple);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-purple);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-purple);
+            color: var(--primary-purple);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-purple);
+        }
+
+        /* Карточки */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            background-color: var(--light-purple);
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            color: var(--primary-purple);
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Список студентов */
+        .student-list {
+            list-style: none;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+
+        .student-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--light-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary-purple);
+            font-weight: bold;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .student-class {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        .student-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .avg-grade {
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .grade-good {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--accent-green);
+        }
+
+        .grade-warning {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: var(--accent-yellow);
+        }
+
+        .grade-bad {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--accent-red);
+        }
+
+        .alert-badge {
+            background-color: var(--accent-red);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Календарь */
+        .calendar-widget {
+            text-align: center;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .calendar-day:hover {
+            background-color: var(--light-purple);
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+
+        .calendar-day.today {
+            background-color: var(--primary-purple);
+            color: white;
+        }
+
+        .calendar-day.event {
+            position: relative;
+        }
+
+        .calendar-day.event::after {
+            content: "";
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: var(--accent-yellow);
+            border-radius: 50%;
+        }
+
+        /* Уведомления */
+        .notification-list {
+            list-style: none;
+        }
+
+        .notification-item {
+            padding: 0.75rem;
+            border-left: 3px solid var(--primary-purple);
+            background-color: var(--light-gray);
+            margin-bottom: 0.75rem;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .notification-item.urgent {
+            border-left-color: var(--accent-red);
+        }
+
+        .notification-item.warning {
+            border-left-color: var(--accent-yellow);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🏫</div>
+            <h1>Электронный журнал - Школа №1</h1>
+        </div>
+        <div class="user-menu">
+            <div class="user-avatar">ИИ</div>
+            <span>Иван Иванов (Классный руководитель)</span>
+        </div>
+    </header>
+
+    <!-- Основная навигация -->
+    <nav class="main-nav">
+        <ul class="nav-links">
+            <li><a href="#" class="active">Главная</a></li>
+            <li><a href="#">Учащиеся</a></li>
+            <li><a href="#">Журналы</a></li>
+            <li><a href="#">Отчеты</a></li>
+            <li><a href="#">Расписание</a></li>
+            <li><a href="#">Календарь</a></li>
+        </ul>
+    </nav>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <!-- Боковая панель -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Мой класс</h3>
+                <ul class="sidebar-links">
+                    <li><a href="#" class="active">10 "А" - Физико-математический</a></li>
+                    <li><a href="#">Список учащихся</a></li>
+                    <li><a href="#">Успеваемость</a></li>
+                    <li><a href="#">Посещаемость</a></li>
+                    <li><a href="#">Родительские собрания</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>Быстрый доступ</h3>
+                <ul class="sidebar-links">
+                    <li><a href="#">Добавить оценку</a></li>
+                    <li><a href="#">Отметить отсутствующих</a></li>
+                    <li><a href="#">Создать отчет</a></li>
+                    <li><a href="#">Написать сообщение</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>Администрирование</h3>
+                <ul class="sidebar-links">
+                    <li><a href="#">Личные дела</a></li>
+                    <li><a href="#">Приказы</a></li>
+                    <li><a href="#">Архив</a></li>
+                    <li><a href="#">Настройки</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Основная область -->
+        <main class="main-content">
+            <section class="welcome-section">
+                <h2>Добро пожаловать, Иван Иванович!</h2>
+                <p>Ваш класс: <strong>10 "А" - Физико-математический</strong></p>
+                
+                <div class="quick-actions">
+                    <button class="btn btn-primary">
+                        <span>📝</span> Добавить оценку
+                    </button>
+                    <button class="btn btn-outline">
+                        <span>👥</span> Отметить отсутствующих
+                    </button>
+                    <button class="btn btn-outline">
+                        <span>📊</span> Создать отчет
+                    </button>
+                </div>
+            </section>
+
+            <div class="dashboard-grid">
+                <!-- Основная колонка -->
+                <div class="main-column">
+                    <!-- Карточка со списком студентов -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Ваш класс (10 "А")</h3>
+                            <span>25 учащихся</span>
+                        </div>
+                        <div class="card-body">
+                            <ul class="student-list">
+                                <li class="student-item">
+                                    <div class="student-avatar">АП</div>
+                                    <div class="student-info">
+                                        <div class="student-name">Петров Алексей</div>
+                                        <div class="student-class">Дата рождения: 15.03.2007</div>
+                                    </div>
+                                    <div class="student-stats">
+                                        <div class="avg-grade grade-good">4.2</div>
+                                        <div class="alert-badge">3</div>
+                                    </div>
+                                </li>
+                                <li class="student-item">
+                                    <div class="student-avatar">МС</div>
+                                    <div class="student-info">
+                                        <div class="student-name">Сидорова Мария</div>
+                                        <div class="student-class">Дата рождения: 22.08.2007</div>
+                                    </div>
+                                    <div class="student-stats">
+                                        <div class="avg-grade grade-good">4.8</div>
+                                    </div>
+                                </li>
+                                <li class="student-item">
+                                    <div class="student-avatar">СИ</div>
+                                    <div class="student-info">
+                                        <div class="student-name">Иванов Сергей</div>
+                                        <div class="student-class">Дата рождения: 10.11.2006</div>
+                                    </div>
+                                    <div class="student-stats">
+                                        <div class="avg-grade grade-bad">3.1</div>
+                                        <div class="alert-badge">5</div>
+                                    </div>
+                                </li>
+                                <li class="student-item">
+                                    <div class="student-avatar">ЕК</div>
+                                    <div class="student-info">
+                                        <div class="student-name">Козлова Елена</div>
+                                        <div class="student-class">Дата рождения: 05.05.2007</div>
+                                    </div>
+                                    <div class="student-stats">
+                                        <div class="avg-grade grade-warning">3.9</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Боковая колонка -->
+                <div class="sidebar-column">
+                    <!-- Карточка с календарем -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Календарь</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="calendar-widget">
+                                <div class="calendar-header">
+                                    <button>&lt;</button>
+                                    <span>Ноябрь 2023</span>
+                                    <button>&gt;</button>
+                                </div>
+                                <div class="calendar-grid">
+                                    <!-- Дни недели -->
+                                    <div class="calendar-day">Пн</div>
+                                    <div class="calendar-day">Вт</div>
+                                    <div class="calendar-day">Ср</div>
+                                    <div class="calendar-day">Чт</div>
+                                    <div class="calendar-day">Пт</div>
+                                    <div class="calendar-day">Сб</div>
+                                    <div class="calendar-day">Вс</div>
+                                    
+                                    <!-- Пример дней календаря -->
+                                    <div class="calendar-day other-month">30</div>
+                                    <div class="calendar-day other-month">31</div>
+                                    <div class="calendar-day">1</div>
+                                    <div class="calendar-day">2</div>
+                                    <div class="calendar-day">3</div>
+                                    <div class="calendar-day">4</div>
+                                    <div class="calendar-day">5</div>
+                                    <div class="calendar-day">6</div>
+                                    <div class="calendar-day">7</div>
+                                    <div class="calendar-day event">8</div>
+                                    <div class="calendar-day">9</div>
+                                    <div class="calendar-day">10</div>
+                                    <div class="calendar-day">11</div>
+                                    <div class="calendar-day">12</div>
+                                    <div class="calendar-day today">13</div>
+                                    <div class="calendar-day">14</div>
+                                    <div class="calendar-day">15</div>
+                                    <div class="calendar-day event">16</div>
+                                    <div class="calendar-day">17</div>
+                                    <div class="calendar-day">18</div>
+                                    <div class="calendar-day">19</div>
+                                    <div class="calendar-day">20</div>
+                                    <div class="calendar-day">21</div>
+                                    <div class="calendar-day">22</div>
+                                    <div class="calendar-day">23</div>
+                                    <div class="calendar-day">24</div>
+                                    <div class="calendar-day">25</div>
+                                    <div class="calendar-day">26</div>
+                                    <div class="calendar-day">27</div>
+                                    <div class="calendar-day">28</div>
+                                    <div class="calendar-day">29</div>
+                                    <div class="calendar-day">30</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Карточка с уведомлениями -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Уведомления</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="notification-list">
+                                <li class="notification-item urgent">
+                                    <strong>Внимание! Низкая успеваемость</strong><br>
+                                    У 3 учеников вашего класса средний балл ниже 3.5
+                                </li>
+                                <li class="notification-item">
+                                    <strong>Завтра педсовет</strong><br>
+                                    14:00, кабинет 215
+                                </li>
+                                <li class="notification-item warning">
+                                    <strong>Через 2 дня родительское собрание</strong><br>
+                                    Тема: "Итоги первой четверти"
+                                </li>
+                                <li class="notification-item">
+                                    <strong>Сегодня отсутствуют</strong><br>
+                                    Сидоров Петр (болеет)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Простой скрипт для демонстрации интерактивности
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавляем обработчики для карточек студентов
+            const studentItems = document.querySelectorAll('.student-item');
+            studentItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    alert('Открывается карточка ученика');
+                    // В реальном приложении здесь будет переход на страницу ученика
+                });
+            });
+            
+            // Обработчики для кнопок быстрого доступа
+            const quickActionBtns = document.querySelectorAll('.btn');
+            quickActionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const btnText = this.textContent.trim();
+                    alert(`Выполняется действие: ${btnText}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
