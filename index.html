@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Электронный журнал - Школа №1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         /* Базовые стили и сброс */
         * {
@@ -294,6 +295,15 @@
             background-color: var(--light-purple);
         }
 
+        .btn-success {
+            background-color: var(--accent-green);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
         .btn-danger {
             background-color: var(--accent-red);
             color: var(--white);
@@ -421,77 +431,6 @@
             font-size: 0.8rem;
         }
 
-        /* Календарь */
-        .calendar-widget {
-            text-align: center;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-
-        .calendar-day {
-            padding: 0.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .calendar-day:hover {
-            background-color: var(--light-purple);
-        }
-
-        .calendar-day.other-month {
-            color: #ccc;
-        }
-
-        .calendar-day.today {
-            background-color: var(--primary-purple);
-            color: white;
-        }
-
-        .calendar-day.event::after {
-            content: "";
-            position: absolute;
-            bottom: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 4px;
-            background-color: var(--accent-yellow);
-            border-radius: 50%;
-        }
-
-        /* Уведомления */
-        .notification-list {
-            list-style: none;
-        }
-
-        .notification-item {
-            padding: 0.75rem;
-            border-left: 3px solid var(--primary-purple);
-            background-color: var(--light-gray);
-            margin-bottom: 0.75rem;
-            border-radius: 0 4px 4px 0;
-        }
-
-        .notification-item.urgent {
-            border-left-color: var(--accent-red);
-        }
-
-        .notification-item.warning {
-            border-left-color: var(--accent-yellow);
-        }
-
         /* Таблицы */
         .table-container {
             overflow-x: auto;
@@ -578,7 +517,7 @@
             background-color: white;
             border-radius: 8px;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
@@ -733,6 +672,40 @@
             .search-box {
                 min-width: 100%;
             }
+            
+            .form-row {
+                flex-direction: column;
+            }
+        }
+
+        /* Уведомления системы */
+        .system-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: var(--accent-green);
+            color: white;
+            border-radius: 4px;
+            box-shadow: var(--shadow);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .system-notification.show {
+            transform: translateX(0);
+        }
+
+        .system-notification.error {
+            background-color: var(--accent-red);
+        }
+
+        .system-notification.warning {
+            background-color: var(--accent-yellow);
         }
     </style>
 </head>
@@ -791,8 +764,8 @@
             <div class="sidebar-section">
                 <h3>Быстрый доступ</h3>
                 <ul class="sidebar-links">
-                    <li><a href="#" id="addGradeBtn"><span class="icon"><i class="fas fa-plus"></i></span> <span>Добавить оценку</span></a></li>
-                    <li><a href="#" id="markAbsenceBtn"><span class="icon"><i class="fas fa-user-times"></i></span> <span>Отметить отсутствие</span></a></li>
+                    <li><a href="#" id="addStudentBtn"><span class="icon"><i class="fas fa-user-plus"></i></span> <span>Добавить ученика</span></a></li>
+                    <li><a href="#" id="exportExcelBtn"><span class="icon"><i class="fas fa-file-excel"></i></span> <span>Экспорт в Excel</span></a></li>
                     <li><a href="#"><span class="icon"><i class="fas fa-file-export"></i></span> <span>Создать отчет</span></a></li>
                     <li><a href="#"><span class="icon"><i class="fas fa-envelope"></i></span> <span>Написать сообщение</span></a></li>
                 </ul>
@@ -816,14 +789,11 @@
                 <p>Ваш класс: <strong>10 "А" - Физико-математический</strong></p>
                 
                 <div class="quick-actions">
-                    <button class="btn btn-primary" id="addStudentBtn">
+                    <button class="btn btn-primary" id="addStudentMainBtn">
                         <i class="fas fa-user-plus"></i> Добавить ученика
                     </button>
-                    <button class="btn btn-outline" id="openJournalBtn">
-                        <i class="fas fa-book"></i> Открыть журнал
-                    </button>
-                    <button class="btn btn-outline">
-                        <i class="fas fa-file-export"></i> Экспорт данных
+                    <button class="btn btn-success" id="exportToExcelBtn">
+                        <i class="fas fa-file-excel"></i> Экспорт в Excel
                     </button>
                     <button class="btn btn-outline">
                         <i class="fas fa-print"></i> Печать отчетов
@@ -833,8 +803,8 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">Всего учащихся</div>
-                        <div class="stat-value">25</div>
-                        <div class="stat-detail">10 мальчиков, 15 девочек</div>
+                        <div class="stat-value" id="totalStudents">0</div>
+                        <div class="stat-detail">Загружается...</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Средний балл</div>
@@ -888,221 +858,28 @@
                 <div class="card">
                     <div class="card-header">
                         <h3>Список учащихся 10 "А" класса</h3>
-                        <span>25 учащихся</span>
+                        <span id="studentsCount">0 учащихся</span>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
                             <table id="studentsTable">
                                 <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Ученик</th>
                                         <th>Дата рождения</th>
-                                        <th>Родитель</th>
+                                        <th>Класс</th>
+                                        <th>Адрес</th>
                                         <th>Телефон</th>
-                                        <th>Средний балл</th>
-                                        <th>Статус</th>
+                                        <th>Родитель</th>
+                                        <th>Мед. информация</th>
                                         <th>Действия</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div style="display: flex; align-items: center;">
-                                                <div class="student-avatar">АП</div>
-                                                <div>
-                                                    <div class="student-name">Петров Алексей</div>
-                                                    <div class="student-class">10 "А"</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>15.03.2007</td>
-                                        <td>Петрова М.И.</td>
-                                        <td>+7 (123) 456-78-90</td>
-                                        <td><span class="avg-grade grade-good">4.2</span></td>
-                                        <td><span class="badge" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px;">Отличник</span></td>
-                                        <td>
-                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                                <i class="fas fa-chart-line"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div style="display: flex; align-items: center;">
-                                                <div class="student-avatar">МС</div>
-                                                <div>
-                                                    <div class="student-name">Сидорова Мария</div>
-                                                    <div class="student-class">10 "А"</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>22.08.2007</td>
-                                        <td>Сидоров А.В.</td>
-                                        <td>+7 (123) 456-78-91</td>
-                                        <td><span class="avg-grade grade-good">4.8</span></td>
-                                        <td><span class="badge" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px;">Отличник</span></td>
-                                        <td>
-                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                                <i class="fas fa-chart-line"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div style="display: flex; align-items: center;">
-                                                <div class="student-avatar">СИ</div>
-                                                <div>
-                                                    <div class="student-name">Иванов Сергей</div>
-                                                    <div class="student-class">10 "А"</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>10.11.2006</td>
-                                        <td>Иванова О.П.</td>
-                                        <td>+7 (123) 456-78-92</td>
-                                        <td><span class="avg-grade grade-bad">3.1</span></td>
-                                        <td><span class="badge" style="background: #ffebee; color: #c62828; padding: 4px 8px; border-radius: 12px;">Проблемный</span></td>
-                                        <td>
-                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                                <i class="fas fa-chart-line"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tbody id="studentsTableBody">
+                                    <!-- Данные будут загружены через JavaScript -->
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dashboard-grid">
-                <div class="main-column">
-                    <!-- Карточка с календарем -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Календарь событий</h3>
-                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                <i class="fas fa-plus"></i> Добавить
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="calendar-widget">
-                                <div class="calendar-header">
-                                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </button>
-                                    <span>Ноябрь 2023</span>
-                                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </button>
-                                </div>
-                                <div class="calendar-grid">
-                                    <!-- Дни недели -->
-                                    <div class="calendar-day">Пн</div>
-                                    <div class="calendar-day">Вт</div>
-                                    <div class="calendar-day">Ср</div>
-                                    <div class="calendar-day">Чт</div>
-                                    <div class="calendar-day">Пт</div>
-                                    <div class="calendar-day">Сб</div>
-                                    <div class="calendar-day">Вс</div>
-                                    
-                                    <!-- Пример дней календаря -->
-                                    <div class="calendar-day other-month">30</div>
-                                    <div class="calendar-day other-month">31</div>
-                                    <div class="calendar-day">1</div>
-                                    <div class="calendar-day">2</div>
-                                    <div class="calendar-day">3</div>
-                                    <div class="calendar-day">4</div>
-                                    <div class="calendar-day">5</div>
-                                    <div class="calendar-day">6</div>
-                                    <div class="calendar-day">7</div>
-                                    <div class="calendar-day event">8</div>
-                                    <div class="calendar-day">9</div>
-                                    <div class="calendar-day">10</div>
-                                    <div class="calendar-day">11</div>
-                                    <div class="calendar-day">12</div>
-                                    <div class="calendar-day today">13</div>
-                                    <div class="calendar-day">14</div>
-                                    <div class="calendar-day">15</div>
-                                    <div class="calendar-day event">16</div>
-                                    <div class="calendar-day">17</div>
-                                    <div class="calendar-day">18</div>
-                                    <div class="calendar-day">19</div>
-                                    <div class="calendar-day">20</div>
-                                    <div class="calendar-day">21</div>
-                                    <div class="calendar-day">22</div>
-                                    <div class="calendar-day">23</div>
-                                    <div class="calendar-day">24</div>
-                                    <div class="calendar-day">25</div>
-                                    <div class="calendar-day">26</div>
-                                    <div class="calendar-day">27</div>
-                                    <div class="calendar-day">28</div>
-                                    <div class="calendar-day">29</div>
-                                    <div class="calendar-day">30</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar-column">
-                    <!-- Карточка с уведомлениями -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Уведомления</h3>
-                            <span class="alert-badge">3</span>
-                        </div>
-                        <div class="card-body">
-                            <ul class="notification-list">
-                                <li class="notification-item urgent">
-                                    <strong>Внимание! Низкая успеваемость</strong><br>
-                                    У 3 учеников вашего класса средний балл ниже 3.5
-                                </li>
-                                <li class="notification-item">
-                                    <strong>Завтра педсовет</strong><br>
-                                    14:00, кабинет 215
-                                </li>
-                                <li class="notification-item warning">
-                                    <strong>Через 2 дня родительское собрание</strong><br>
-                                    Тема: "Итоги первой четверти"
-                                </li>
-                                <li class="notification-item">
-                                    <strong>Сегодня отсутствуют</strong><br>
-                                    Сидоров Петр (болеет)
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Карточка с быстрыми действиями -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Быстрые действия</h3>
-                        </div>
-                        <div class="card-body">
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                <button class="btn btn-outline" style="justify-content: start;">
-                                    <i class="fas fa-file-medical"></i> Создать отчет об успеваемости
-                                </button>
-                                <button class="btn btn-outline" style="justify-content: start;">
-                                    <i class="fas fa-envelope"></i> Отправить уведомление родителям
-                                </button>
-                                <button class="btn btn-outline" style="justify-content: start;">
-                                    <i class="fas fa-chart-pie"></i> Сформировать статистику
-                                </button>
-                                <button class="btn btn-outline" style="justify-content: start;">
-                                    <i class="fas fa-print"></i> Распечатать ведомость
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1114,7 +891,7 @@
     <div class="modal" id="addStudentModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Добавление нового ученика</h3>
+                <h3>Создание личного дела ученика</h3>
                 <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -1140,30 +917,50 @@
                             <input type="date" id="birthDate" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="class">Класс *</label>
-                            <select id="class" class="form-control" required>
-                                <option value="">Выберите класс</option>
-                                <option value="10A">10 "А"</option>
-                                <option value="10B">10 "Б"</option>
-                                <option value="11A">11 "А"</option>
+                            <label for="gender">Пол</label>
+                            <select id="gender" class="form-control">
+                                <option value="М">Мужской</option>
+                                <option value="Ж">Женский</option>
                             </select>
                         </div>
                     </div>
                     
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="class">Класс *</label>
+                            <select id="class" class="form-control" required>
+                                <option value="">Выберите класс</option>
+                                <option value="10А">10 "А"</option>
+                                <option value="10Б">10 "Б"</option>
+                                <option value="11А">11 "А"</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="admissionYear">Год поступления *</label>
+                            <input type="number" id="admissionYear" class="form-control" min="2000" max="2030" value="2023" required>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
-                        <label for="address">Адрес проживания</label>
-                        <input type="text" id="address" class="form-control">
+                        <label for="address">Адрес проживания *</label>
+                        <input type="text" id="address" class="form-control" required>
                     </div>
                     
                     <div class="form-group">
                         <label>Данные родителей</label>
                         <div class="form-row">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="ФИО родителя">
+                                <label for="parentName">ФИО родителя *</label>
+                                <input type="text" id="parentName" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <input type="tel" class="form-control" placeholder="Телефон">
+                                <label for="parentPhone">Телефон *</label>
+                                <input type="tel" id="parentPhone" class="form-control" required>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="parentWork">Место работы</label>
+                            <input type="text" id="parentWork" class="form-control">
                         </div>
                     </div>
                     
@@ -1171,86 +968,37 @@
                         <label for="medicalInfo">Медицинская информация</label>
                         <textarea id="medicalInfo" class="form-control" rows="3" placeholder="Группа здоровья, аллергии, рекомендации врача"></textarea>
                     </div>
+
+                    <div class="form-group">
+                        <label for="additionalInfo">Дополнительная информация</label>
+                        <textarea id="additionalInfo" class="form-control" rows="2" placeholder="Хобби, увлечения, особые способности"></textarea>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline close-modal">Отмена</button>
-                <button class="btn btn-primary" id="saveStudentBtn">Сохранить</button>
+                <button class="btn btn-primary" id="saveStudentBtn">Сохранить личное дело</button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно добавления оценки -->
-    <div class="modal" id="addGradeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Добавление оценки</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="addGradeForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="studentSelect">Ученик *</label>
-                            <select id="studentSelect" class="form-control" required>
-                                <option value="">Выберите ученика</option>
-                                <option value="1">Петров Алексей</option>
-                                <option value="2">Сидорова Мария</option>
-                                <option value="3">Иванов Сергей</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="subjectSelect">Предмет *</label>
-                            <select id="subjectSelect" class="form-control" required>
-                                <option value="">Выберите предмет</option>
-                                <option value="math">Математика</option>
-                                <option value="physics">Физика</option>
-                                <option value="russian">Русский язык</option>
-                                <option value="literature">Литература</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="gradeValue">Оценка *</label>
-                            <select id="gradeValue" class="form-control" required>
-                                <option value="">Выберите оценку</option>
-                                <option value="5">5 (Отлично)</option>
-                                <option value="4">4 (Хорошо)</option>
-                                <option value="3">3 (Удовлетворительно)</option>
-                                <option value="2">2 (Неудовлетворительно)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="gradeDate">Дата оценки *</label>
-                            <input type="date" id="gradeDate" class="form-control" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gradeComment">Комментарий</label>
-                        <textarea id="gradeComment" class="form-control" rows="2" placeholder="Тема урока, тип работы и т.д."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline close-modal">Отмена</button>
-                <button class="btn btn-primary" id="saveGradeBtn">Сохранить оценку</button>
-            </div>
-        </div>
+    <!-- Системное уведомление -->
+    <div class="system-notification" id="systemNotification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Операция выполнена успешно!</span>
     </div>
 
     <script>
-        // Данные для демонстрации
-        const students = [
-            { id: 1, firstName: "Алексей", lastName: "Петров", middleName: "Сергеевич", birthDate: "2007-03-15", class: "10А", avgGrade: 4.2, status: "excellent" },
-            { id: 2, firstName: "Мария", lastName: "Сидорова", middleName: "Александровна", birthDate: "2007-08-22", class: "10А", avgGrade: 4.8, status: "excellent" },
-            { id: 3, firstName: "Сергей", lastName: "Иванов", middleName: "Петрович", birthDate: "2006-11-10", class: "10А", avgGrade: 3.1, status: "problem" }
-        ];
+        // Хранилище данных учащихся
+        let studentsData = JSON.parse(localStorage.getItem('studentsData')) || [];
+        let nextStudentId = parseInt(localStorage.getItem('nextStudentId')) || 1;
 
         // Инициализация интерфейса
         document.addEventListener('DOMContentLoaded', function() {
+            // Загрузка данных при запуске
+            loadStudentsData();
+            updateStatistics();
+
             // Переключение боковой панели
             const toggleSidebarBtn = document.getElementById('toggleSidebar');
             const sidebar = document.getElementById('sidebar');
@@ -1269,17 +1017,15 @@
 
             // Управление модальными окнами
             const modals = document.querySelectorAll('.modal');
-            const openModalBtns = document.querySelectorAll('[data-modal]');
             const closeModalBtns = document.querySelectorAll('.close-modal');
             
             // Открытие модальных окон
-            document.getElementById('addStudentBtn').addEventListener('click', function() {
-                document.getElementById('addStudentModal').style.display = 'flex';
-            });
+            document.getElementById('addStudentBtn').addEventListener('click', openAddStudentModal);
+            document.getElementById('addStudentMainBtn').addEventListener('click', openAddStudentModal);
             
-            document.getElementById('addGradeBtn').addEventListener('click', function() {
-                document.getElementById('addGradeModal').style.display = 'flex';
-            });
+            // Экспорт в Excel
+            document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+            document.getElementById('exportToExcelBtn').addEventListener('click', exportToExcel);
             
             // Закрытие модальных окон
             closeModalBtns.forEach(btn => {
@@ -1300,27 +1046,7 @@
             });
             
             // Сохранение данных форм
-            document.getElementById('saveStudentBtn').addEventListener('click', function() {
-                const form = document.getElementById('addStudentForm');
-                if (form.checkValidity()) {
-                    alert('Ученик успешно добавлен!');
-                    document.getElementById('addStudentModal').style.display = 'none';
-                    form.reset();
-                } else {
-                    alert('Пожалуйста, заполните все обязательные поля!');
-                }
-            });
-            
-            document.getElementById('saveGradeBtn').addEventListener('click', function() {
-                const form = document.getElementById('addGradeForm');
-                if (form.checkValidity()) {
-                    alert('Оценка успешно добавлена!');
-                    document.getElementById('addGradeModal').style.display = 'none';
-                    form.reset();
-                } else {
-                    alert('Пожалуйста, заполните все обязательные поля!');
-                }
-            });
+            document.getElementById('saveStudentBtn').addEventListener('click', saveStudent);
             
             // Переключение вкладок
             const tabs = document.querySelectorAll('.tab');
@@ -1347,7 +1073,7 @@
                 const rows = document.querySelectorAll('#studentsTable tbody tr');
                 
                 rows.forEach(row => {
-                    const studentName = row.querySelector('.student-name').textContent.toLowerCase();
+                    const studentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
                     if (studentName.includes(searchTerm)) {
                         row.style.display = '';
                     } else {
@@ -1355,19 +1081,262 @@
                     }
                 });
             });
-            
-            // Открытие журнала
-            document.getElementById('openJournalBtn').addEventListener('click', function() {
-                alert('Открывается электронный журнал...');
-                // В реальном приложении здесь будет переход на страницу журнала
-            });
-            
-            // Отметка отсутствующих
-            document.getElementById('markAbsenceBtn').addEventListener('click', function() {
-                alert('Открывается форма для отметки отсутствующих...');
-                // В реальном приложении здесь будет открытие соответствующей формы
-            });
         });
+
+        // Функции для работы с данными
+
+        function openAddStudentModal() {
+            document.getElementById('addStudentModal').style.display = 'flex';
+            document.getElementById('addStudentForm').reset();
+        }
+
+        function saveStudent() {
+            const form = document.getElementById('addStudentForm');
+            if (!form.checkValidity()) {
+                showNotification('Пожалуйста, заполните все обязательные поля!', 'error');
+                return;
+            }
+
+            const student = {
+                id: nextStudentId++,
+                lastName: document.getElementById('lastName').value,
+                firstName: document.getElementById('firstName').value,
+                middleName: document.getElementById('middleName').value,
+                birthDate: document.getElementById('birthDate').value,
+                gender: document.getElementById('gender').value,
+                class: document.getElementById('class').value,
+                admissionYear: document.getElementById('admissionYear').value,
+                address: document.getElementById('address').value,
+                parentName: document.getElementById('parentName').value,
+                parentPhone: document.getElementById('parentPhone').value,
+                parentWork: document.getElementById('parentWork').value,
+                medicalInfo: document.getElementById('medicalInfo').value,
+                additionalInfo: document.getElementById('additionalInfo').value,
+                createdAt: new Date().toISOString()
+            };
+
+            studentsData.push(student);
+            saveDataToStorage();
+            loadStudentsData();
+            updateStatistics();
+            
+            document.getElementById('addStudentModal').style.display = 'none';
+            showNotification('Личное дело ученика успешно создано!');
+        }
+
+        function loadStudentsData() {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            if (studentsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Нет данных об учениках</td></tr>';
+                return;
+            }
+            
+            studentsData.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.lastName} ${student.firstName} ${student.middleName || ''}</td>
+                    <td>${formatDate(student.birthDate)}</td>
+                    <td>${student.class}</td>
+                    <td>${student.address}</td>
+                    <td>${student.parentPhone}</td>
+                    <td>${student.parentName}</td>
+                    <td>${student.medicalInfo || '-'}</td>
+                    <td>
+                        <button class="btn btn-outline" onclick="editStudent(${student.id})" style="padding: 0.25rem 0.5rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline" onclick="deleteStudent(${student.id})" style="padding: 0.25rem 0.5rem;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('studentsCount').textContent = `${studentsData.length} учащихся`;
+        }
+
+        function editStudent(id) {
+            const student = studentsData.find(s => s.id === id);
+            if (student) {
+                // Заполняем форму данными ученика
+                document.getElementById('lastName').value = student.lastName;
+                document.getElementById('firstName').value = student.firstName;
+                document.getElementById('middleName').value = student.middleName || '';
+                document.getElementById('birthDate').value = student.birthDate;
+                document.getElementById('gender').value = student.gender;
+                document.getElementById('class').value = student.class;
+                document.getElementById('admissionYear').value = student.admissionYear;
+                document.getElementById('address').value = student.address;
+                document.getElementById('parentName').value = student.parentName;
+                document.getElementById('parentPhone').value = student.parentPhone;
+                document.getElementById('parentWork').value = student.parentWork || '';
+                document.getElementById('medicalInfo').value = student.medicalInfo || '';
+                document.getElementById('additionalInfo').value = student.additionalInfo || '';
+                
+                // Удаляем старые данные
+                studentsData = studentsData.filter(s => s.id !== id);
+                
+                // Открываем модальное окно
+                document.getElementById('addStudentModal').style.display = 'flex';
+                showNotification('Редактирование личного дела ученика');
+            }
+        }
+
+        function deleteStudent(id) {
+            if (confirm('Вы уверены, что хотите удалить личное дело ученика?')) {
+                studentsData = studentsData.filter(s => s.id !== id);
+                saveDataToStorage();
+                loadStudentsData();
+                updateStatistics();
+                showNotification('Личное дело ученика удалено!');
+            }
+        }
+
+        function updateStatistics() {
+            document.getElementById('totalStudents').textContent = studentsData.length;
+        }
+
+        function saveDataToStorage() {
+            localStorage.setItem('studentsData', JSON.stringify(studentsData));
+            localStorage.setItem('nextStudentId', nextStudentId.toString());
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('systemNotification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = 'system-notification';
+            
+            if (type === 'error') {
+                notification.classList.add('error');
+            } else if (type === 'warning') {
+                notification.classList.add('warning');
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Экспорт в Excel
+        function exportToExcel() {
+            if (studentsData.length === 0) {
+                showNotification('Нет данных для экспорта!', 'warning');
+                return;
+            }
+
+            try {
+                // Подготовка данных для Excel
+                const excelData = studentsData.map(student => ({
+                    'ID': student.id,
+                    'Фамилия': student.lastName,
+                    'Имя': student.firstName,
+                    'Отчество': student.middleName || '',
+                    'Дата рождения': formatDate(student.birthDate),
+                    'Пол': student.gender,
+                    'Класс': student.class,
+                    'Год поступления': student.admissionYear,
+                    'Адрес проживания': student.address,
+                    'ФИО родителя': student.parentName,
+                    'Телефон родителя': student.parentPhone,
+                    'Место работы родителя': student.parentWork || '',
+                    'Медицинская информация': student.medicalInfo || '',
+                    'Дополнительная информация': student.additionalInfo || '',
+                    'Дата создания': formatDate(student.createdAt)
+                }));
+
+                // Создание рабочей книги
+                const ws = XLSX.utils.json_to_sheet(excelData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Учащиеся');
+
+                // Настройка стилей колонок
+                const colWidths = [
+                    { wch: 5 },  // ID
+                    { wch: 15 }, // Фамилия
+                    { wch: 15 }, // Имя
+                    { wch: 15 }, // Отчество
+                    { wch: 12 }, // Дата рождения
+                    { wch: 8 },  // Пол
+                    { wch: 8 },  // Класс
+                    { wch: 12 }, // Год поступления
+                    { wch: 30 }, // Адрес
+                    { wch: 20 }, // ФИО родителя
+                    { wch: 15 }, // Телефон родителя
+                    { wch: 20 }, // Место работы
+                    { wch: 25 }, // Мед. информация
+                    { wch: 25 }, // Доп. информация
+                    { wch: 12 }  // Дата создания
+                ];
+                ws['!cols'] = colWidths;
+
+                // Сохранение файла
+                const fileName = `Учащиеся_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showNotification(`Данные экспортированы в файл: ${fileName}`);
+            } catch (error) {
+                console.error('Ошибка при экспорте в Excel:', error);
+                showNotification('Произошла ошибка при экспорте данных!', 'error');
+            }
+        }
+
+        // Добавление тестовых данных при первом запуске
+        if (studentsData.length === 0) {
+            studentsData = [
+                {
+                    id: 1,
+                    lastName: "Петров",
+                    firstName: "Алексей",
+                    middleName: "Сергеевич",
+                    birthDate: "2007-03-15",
+                    gender: "М",
+                    class: "10А",
+                    admissionYear: "2023",
+                    address: "г. Москва, ул. Ленина, д. 15, кв. 42",
+                    parentName: "Петрова Мария Ивановна",
+                    parentPhone: "+7 (123) 456-78-90",
+                    parentWork: "ООО 'Технологии'",
+                    medicalInfo: "Группа здоровья I, аллергия на арахис",
+                    additionalInfo: "Увлекается программированием, математикой",
+                    createdAt: "2023-09-01T10:00:00Z"
+                },
+                {
+                    id: 2,
+                    lastName: "Сидорова",
+                    firstName: "Мария",
+                    middleName: "Александровна",
+                    birthDate: "2007-08-22",
+                    gender: "Ж",
+                    class: "10А",
+                    admissionYear: "2023",
+                    address: "г. Москва, пр. Мира, д. 25, кв. 17",
+                    parentName: "Сидоров Александр Васильевич",
+                    parentPhone: "+7 (123) 456-78-91",
+                    parentWork: "ГБОУ Школа №123",
+                    medicalInfo: "Группа здоровья II, носит очки",
+                    additionalInfo: "Занимается музыкой, отличница",
+                    createdAt: "2023-09-01T10:15:00Z"
+                }
+            ];
+            nextStudentId = 3;
+            saveDataToStorage();
+            loadStudentsData();
+            updateStatistics();
+        }
     </script>
 </body>
 </html>
