@@ -36,189 +36,182 @@ const SUBJECT_LABELS = {
     literature: 'Литература'
 };
 
+if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+    window.location.replace('index.html');
+}
+
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', function() {
-    // Загрузка данных
     loadStudentsData();
     loadGradesData();
     updateStatistics();
     initializeCharts();
 
-    // Переключение темы
     const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', function() {
-        document.body.classList.toggle('dark-theme');
-        const icon = this.querySelector('i');
-        if (document.body.classList.contains('dark-theme')) {
-            icon.classList.remove('fa-moon');
-            icon.classList.add('fa-sun');
-        } else {
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
-        }
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('dark-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    }
 
-    // Переключение боковой панели
+    const logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            sessionStorage.removeItem('isAuthenticated');
+            window.location.replace('index.html');
+        });
+    }
+
     const toggleSidebarBtn = document.getElementById('toggleSidebar');
     const sidebar = document.getElementById('sidebar');
+    if (toggleSidebarBtn && sidebar) {
+        toggleSidebarBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            const icon = this.querySelector('i');
+            if (sidebar.classList.contains('collapsed')) {
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-left');
+            }
+        });
+    }
 
-    toggleSidebarBtn.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        const icon = this.querySelector('i');
-        if (sidebar.classList.contains('collapsed')) {
-            icon.classList.remove('fa-chevron-left');
-            icon.classList.add('fa-chevron-right');
-        } else {
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-left');
-        }
-    });
-
-    // Мобильное меню
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const mainNav = document.getElementById('mainNav');
+    if (mobileMenuToggle && mainNav) {
+        mobileMenuToggle.addEventListener('click', function() {
+            mainNav.classList.toggle('active');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
+        });
+    }
 
-    mobileMenuToggle.addEventListener('click', function() {
-        mainNav.classList.toggle('active');
-        sidebar.classList.toggle('active');
-    });
-
-    // Управление модальными окнами
     const modals = document.querySelectorAll('.modal');
     const closeModalBtns = document.querySelectorAll('.close-modal');
-
-    // Открытие модальных окон
-    document.getElementById('addStudentBtn').addEventListener('click', openAddStudentModal);
-    document.getElementById('addStudentMainBtn').addEventListener('click', openAddStudentModal);
-    document.getElementById('addGradeBtn').addEventListener('click', openAddGradeModal);
-
-    // Экспорт в Excel
-    document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
-    document.getElementById('exportToExcelBtn').addEventListener('click', exportToExcel);
-
-    // Закрытие модальных окон
-    closeModalBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            modals.forEach(modal => {
-                modal.style.display = 'none';
-            });
-        });
-    });
-
-    // Закрытие при клике вне модального окна
-    window.addEventListener('click', function(event) {
-        modals.forEach(modal => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
-
-    // Сохранение данных форм
-    document.getElementById('saveStudentBtn').addEventListener('click', saveStudent);
-    document.getElementById('saveGradeBtn').addEventListener('click', saveGrade);
-
-    // Переключение вкладок
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const tabName = this.getAttribute('data-tab');
-
-            // Убираем активный класс у всех вкладок и контента
-            tabs.forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // Добавляем активный класс текущей вкладке и контенту
-            this.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
-        });
-    });
-
-    // Переключение разделов
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sidebarLinks = document.querySelectorAll('.sidebar-link');
-    const contentSections = document.querySelectorAll('.content-section');
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const section = this.getAttribute('data-section');
-
-            // Убираем активный класс у всех ссылок и секций
-            navLinks.forEach(l => l.classList.remove('active'));
-            contentSections.forEach(s => s.classList.remove('active'));
-
-            // Добавляем активный класс текущей ссылке и секции
-            this.classList.add('active');
-            document.getElementById(section + '-section').classList.add('active');
-
-            // На мобильных устройствах скрываем меню после выбора
-            if (window.innerWidth <= 768) {
-                mainNav.classList.remove('active');
-            }
-        });
-    });
-
-    sidebarLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const section = this.getAttribute('data-section');
-
-            // Убираем активный класс у всех ссылок
-            sidebarLinks.forEach(l => l.classList.remove('active'));
-
-            // Добавляем активный класс текущей ссылке
-            this.classList.add('active');
-
-            // Если это ссылка на раздел, переключаемся на него
-            if (section) {
-                navLinks.forEach(l => {
-                    if (l.getAttribute('data-section') === section) {
-                        l.click();
-                    }
+    if (modals.length && closeModalBtns.length) {
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                modals.forEach(modal => {
+                    modal.style.display = 'none';
                 });
-            }
+            });
         });
-    });
 
-    // Поиск учеников
+        window.addEventListener('click', function(event) {
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    bindActionButton('addStudentBtn', openAddStudentModal);
+    bindActionButton('addStudentMainBtn', openAddStudentModal);
+    bindActionButton('addGradeBtn', openAddGradeModal);
+    bindActionButton('exportExcelBtn', exportToExcel);
+    bindActionButton('exportToExcelBtn', exportToExcel);
+
+    const saveStudentBtn = document.getElementById('saveStudentBtn');
+    if (saveStudentBtn) {
+        saveStudentBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            saveStudent();
+        });
+    }
+
+    const saveGradeBtn = document.getElementById('saveGradeBtn');
+    if (saveGradeBtn) {
+        saveGradeBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            saveGrade();
+        });
+    }
+
+    const tabs = document.querySelectorAll('.tab');
+    if (tabs.length) {
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                this.classList.add('active');
+                const target = document.getElementById(tabName + '-tab');
+                if (target) {
+                    target.classList.add('active');
+                }
+            });
+        });
+    }
+
     const searchInput = document.getElementById('searchStudents');
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#studentsTable tbody tr');
-
-        rows.forEach(row => {
-            const studentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            if (studentName.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#studentsTable tbody tr');
+            rows.forEach(row => {
+                const studentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                row.style.display = studentName.includes(searchTerm) ? '' : 'none';
+            });
         });
-    });
+    }
 
-    // Применение фильтров
-    document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            applyFilters();
+        });
+    }
 
-    // Имитация получения уведомления
-    setInterval(() => {
-        if (Math.random() > 0.7) {
-            showMobileNotification('Новое сообщение', 'У вас новое сообщение от ученика');
-        }
-    }, 30000);
+    const mobileNotification = document.getElementById('mobileNotification');
+    if (mobileNotification) {
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                showMobileNotification('Новое сообщение', 'У вас новое сообщение от ученика');
+            }
+        }, 30000);
+    }
 });
+
+function bindActionButton(elementId, handler) {
+    const element = document.getElementById(elementId);
+    if (!element || typeof handler !== 'function') {
+        return;
+    }
+    element.addEventListener('click', (event) => {
+        event.preventDefault();
+        handler(event);
+    });
+}
 
 // Функции для работы с данными
 
 function openAddStudentModal() {
-    document.getElementById('addStudentModal').style.display = 'flex';
-    document.getElementById('addStudentForm').reset();
+    const modal = document.getElementById('addStudentModal');
+    const form = document.getElementById('addStudentForm');
+    if (!modal || !form) return;
+    modal.style.display = 'flex';
+    form.reset();
 }
 
 function saveStudent() {
     const form = document.getElementById('addStudentForm');
+    if (!form) return;
     if (!form.checkValidity()) {
         showNotification('Пожалуйста, заполните все обязательные поля!', 'error');
         return;
@@ -247,14 +240,19 @@ function saveStudent() {
     loadStudentsData();
     updateStatistics();
 
-    document.getElementById('addStudentModal').style.display = 'none';
+    const modal = document.getElementById('addStudentModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
     showNotification('Личное дело ученика успешно создано!');
 }
 
 function openAddGradeModal() {
-    // Заполнение списка учеников
+    const modal = document.getElementById('addGradeModal');
+    const form = document.getElementById('addGradeForm');
     const studentSelect = document.getElementById('gradeStudent');
-    studentSelect.innerHTML = '<option value="">Выберите ученика</option>';
+    if (!modal || !form || !studentSelect) return;
+    studentSelect.innerHTML = '<option value=\"\">Выберите ученика</option>';
 
     studentsData.forEach(student => {
         const option = document.createElement('option');
@@ -263,12 +261,13 @@ function openAddGradeModal() {
         studentSelect.appendChild(option);
     });
 
-    document.getElementById('addGradeModal').style.display = 'flex';
-    document.getElementById('addGradeForm').reset();
+    modal.style.display = 'flex';
+    form.reset();
 }
 
 function saveGrade() {
     const form = document.getElementById('addGradeForm');
+    if (!form) return;
     if (!form.checkValidity()) {
         showNotification('Пожалуйста, заполните все обязательные поля!', 'error');
         return;
@@ -290,16 +289,29 @@ function saveGrade() {
     loadGradesData();
     updateStatistics();
 
-    document.getElementById('addGradeModal').style.display = 'none';
+    const modal = document.getElementById('addGradeModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
     showNotification('Оценка успешно добавлена!');
 }
 
 function loadStudentsData() {
     const tbody = document.getElementById('studentsTableBody');
+    const countElement = document.getElementById('studentsCount');
+    if (!tbody) {
+        if (countElement) {
+            countElement.textContent = `${studentsData.length} учащихся`;
+        }
+        return;
+    }
     tbody.innerHTML = '';
 
     if (studentsData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Нет данных об учениках</td></tr>';
+        if (countElement) {
+            countElement.textContent = '0 учащихся';
+        }
         return;
     }
 
@@ -326,11 +338,14 @@ function loadStudentsData() {
         tbody.appendChild(row);
     });
 
-    document.getElementById('studentsCount').textContent = `${studentsData.length} учащихся`;
+    if (countElement) {
+        countElement.textContent = `${studentsData.length} учащихся`;
+    }
 }
 
 function loadGradesData() {
     const tbody = document.getElementById('gradesTableBody');
+    if (!tbody) return;
     tbody.innerHTML = '';
 
     if (gradesData.length === 0) {
@@ -498,7 +513,10 @@ function deleteStudent(id) {
 }
 
 function updateStatistics() {
-    document.getElementById('totalStudents').textContent = studentsData.length;
+    const totalStudentsElement = document.getElementById('totalStudents');
+    if (totalStudentsElement) {
+        totalStudentsElement.textContent = studentsData.length;
+    }
 }
 
 function saveDataToStorage() {
@@ -520,6 +538,7 @@ function formatDate(dateString) {
 function showNotification(message, type = 'success') {
     const notification = document.getElementById('systemNotification');
     const notificationText = document.getElementById('notificationText');
+    if (!notification || !notificationText) return;
 
     notificationText.textContent = message;
     notification.className = 'system-notification';
@@ -539,6 +558,7 @@ function showNotification(message, type = 'success') {
 
 function showMobileNotification(title, message) {
     const notification = document.getElementById('mobileNotification');
+    if (!notification) return;
     const titleElement = notification.querySelector('strong');
     const messageElement = notification.querySelector('p');
 
@@ -553,9 +573,16 @@ function showMobileNotification(title, message) {
 }
 
 function applyFilters() {
-    const classFilter = document.getElementById('filterClass').value;
-    const statusFilter = document.getElementById('filterStatus').value;
-    const searchTerm = document.getElementById('searchStudents').value.toLowerCase();
+    const classFilterSelect = document.getElementById('filterClass');
+    const statusFilterSelect = document.getElementById('filterStatus');
+    const searchInput = document.getElementById('searchStudents');
+    const studentsTable = document.getElementById('studentsTable');
+
+    if (!studentsTable) return;
+
+    const classFilter = classFilterSelect ? classFilterSelect.value : '';
+    const statusFilter = statusFilterSelect ? statusFilterSelect.value : '';
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
 
     const rows = document.querySelectorAll('#studentsTable tbody tr');
 
@@ -583,105 +610,109 @@ function applyFilters() {
 }
 
 function initializeCharts() {
-    // График успеваемости на главной
-    const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-    const performanceChart = new Chart(performanceCtx, {
-        type: 'line',
-        data: {
-            labels: ['Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-            datasets: [{
-                label: 'Средний балл',
-                data: [3.8, 4.0, 4.1, 4.2],
-                borderColor: '#6a0dad',
-                backgroundColor: 'rgba(106, 13, 173, 0.1)',
-                tension: 0.3,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    min: 3,
-                    max: 5
+    const performanceCanvas = document.getElementById('performanceChart');
+    if (performanceCanvas) {
+        new Chart(performanceCanvas.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                datasets: [{
+                    label: 'Средний балл',
+                    data: [3.8, 4.0, 4.1, 4.2],
+                    borderColor: '#6a0dad',
+                    backgroundColor: 'rgba(106, 13, 173, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 3,
+                        max: 5
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
-    // График оценок в разделе успеваемости
-    const gradesCtx = document.getElementById('gradesChart').getContext('2d');
-    const gradesChart = new Chart(gradesCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Математика', 'Физика', 'Информатика', 'Русский язык', 'Литература'],
-            datasets: [{
-                label: 'Средний балл',
-                data: [4.5, 4.2, 4.8, 3.9, 4.1],
-                backgroundColor: [
-                    'rgba(106, 13, 173, 0.7)',
-                    'rgba(52, 152, 219, 0.7)',
-                    'rgba(46, 204, 113, 0.7)',
-                    'rgba(243, 156, 18, 0.7)',
-                    'rgba(231, 76, 60, 0.7)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
+    const gradesCanvas = document.getElementById('gradesChart');
+    if (gradesCanvas) {
+        new Chart(gradesCanvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Математика', 'Физика', 'Информатика', 'Русский язык', 'Литература'],
+                datasets: [{
+                    label: 'Средний балл',
+                    data: [4.5, 4.2, 4.8, 3.9, 4.1],
+                    backgroundColor: [
+                        'rgba(106, 13, 173, 0.7)',
+                        'rgba(52, 152, 219, 0.7)',
+                        'rgba(46, 204, 113, 0.7)',
+                        'rgba(243, 156, 18, 0.7)',
+                        'rgba(231, 76, 60, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
-    // График посещаемости
-    const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-    const attendanceChart = new Chart(attendanceCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Присутствовали', 'Пропуски по болезни', 'Пропуски без причины'],
-            datasets: [{
-                data: [85, 10, 5],
-                backgroundColor: [
-                    'rgba(46, 204, 113, 0.7)',
-                    'rgba(52, 152, 219, 0.7)',
-                    'rgba(231, 76, 60, 0.7)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+    const attendanceCanvas = document.getElementById('attendanceChart');
+    if (attendanceCanvas) {
+        new Chart(attendanceCanvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Присутствовали', 'Пропуски по болезни', 'Пропуски без причины'],
+                datasets: [{
+                    data: [85, 10, 5],
+                    backgroundColor: [
+                        'rgba(46, 204, 113, 0.7)',
+                        'rgba(52, 152, 219, 0.7)',
+                        'rgba(231, 76, 60, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
 
-    // График выполнения домашних заданий
-    const homeworkCtx = document.getElementById('homeworkChart').getContext('2d');
-    const homeworkChart = new Chart(homeworkCtx, {
-        type: 'pie',
-        data: {
-            labels: ['Выполнено вовремя', 'Выполнено с опозданием', 'Не выполнено'],
-            datasets: [{
-                data: [65, 20, 15],
-                backgroundColor: [
-                    'rgba(46, 204, 113, 0.7)',
-                    'rgba(243, 156, 18, 0.7)',
-                    'rgba(231, 76, 60, 0.7)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+    const homeworkCanvas = document.getElementById('homeworkChart');
+    if (homeworkCanvas) {
+        new Chart(homeworkCanvas.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['Выполнено вовремя', 'Выполнено с опозданием', 'Не выполнено'],
+                datasets: [{
+                    data: [65, 20, 15],
+                    backgroundColor: [
+                        'rgba(46, 204, 113, 0.7)',
+                        'rgba(243, 156, 18, 0.7)',
+                        'rgba(231, 76, 60, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
 }
 
 function calculateAverage(grades) {

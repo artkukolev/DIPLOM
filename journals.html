@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электронный журнал - Журналы</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="journals">
+
+<!-- Шапка -->
+<header>
+    <div class="logo">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo-icon">🏫</div>
+        <h1>Электронный журнал - Школа №1</h1>
+    </div>
+    <div class="user-menu">
+        <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </button>
+        <div class="user-dropdown">
+            <div class="user-avatar">ИИ</div>
+            <div class="dropdown-content">
+                <a href="#"><i class="fas fa-user"></i> Мой профиль</a>
+                <a href="#"><i class="fas fa-cog"></i> Настройки</a>
+                <a href="#"><i class="fas fa-question-circle"></i> Помощь</a>
+                <a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+        <span class="user-name">Иван Иванов (Классный руководитель)</span>
+    </div>
+</header>
+    <nav class="main-nav" id="mainNav">
+        <ul class="nav-links">
+            <li><a href="dashboard.html" class="nav-link"><i class="fas fa-home"></i> Главная</a></li>
+            <li><a href="students.html" class="nav-link"><i class="fas fa-users"></i> Учащиеся</a></li>
+            <li><a href="journals.html" class="nav-link active"><i class="fas fa-book"></i> Журналы</a></li>
+            <li><a href="grades.html" class="nav-link"><i class="fas fa-chart-line"></i> Оценки</a></li>
+            <li><a href="homework.html" class="nav-link"><i class="fas fa-tasks"></i> Задания</a></li>
+            <li><a href="messages.html" class="nav-link"><i class="fas fa-comments"></i> Сообщения</a></li>
+            <li><a href="calendar.html" class="nav-link"><i class="fas fa-calendar-alt"></i> Календарь</a></li>
+            <li><a href="reports.html" class="nav-link"><i class="fas fa-chart-bar"></i> Отчеты</a></li>
+            <li><a href="schedule.html" class="nav-link"><i class="fas fa-clock"></i> Расписание</a></li>
+            <li><a href="admin.html" class="nav-link"><i class="fas fa-cog"></i> Администрирование</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <button class="toggle-sidebar" id="toggleSidebar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+                        <div class="sidebar-section">
+                <h3>Мой класс</h3>
+                <ul class="sidebar-links">
+                    <li><a href="dashboard.html" class="sidebar-link"><span class="icon"><i class="fas fa-users"></i></span> <span>10 "А" - Физ-мат</span></a></li>
+                    <li><a href="students.html" class="sidebar-link"><span class="icon"><i class="fas fa-list"></i></span> <span>Список учащихся</span></a></li>
+                    <li><a href="grades.html" class="sidebar-link"><span class="icon"><i class="fas fa-chart-line"></i></span> <span>Успеваемость</span></a></li>
+                    <li><a href="reports.html" class="sidebar-link"><span class="icon"><i class="fas fa-calendar-check"></i></span> <span>Посещаемость</span></a></li>
+                    <li><a href="messages.html" class="sidebar-link"><span class="icon"><i class="fas fa-user-friends"></i></span> <span>Родители</span></a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Администрирование</h3>
+                <ul class="sidebar-links">
+                    <li><a href="admin.html" class="sidebar-link"><span class="icon"><i class="fas fa-folder"></i></span> <span>Личные дела</span></a></li>
+                    <li><a href="admin.html#orders" class="sidebar-link"><span class="icon"><i class="fas fa-file-alt"></i></span> <span>Приказы</span></a></li>
+                    <li><a href="admin.html#archive" class="sidebar-link"><span class="icon"><i class="fas fa-archive"></i></span> <span>Архив</span></a></li>
+                    <li><a href="admin.html#settings" class="sidebar-link"><span class="icon"><i class="fas fa-sliders-h"></i></span> <span>Настройки</span></a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Быстрый доступ</h3>
+                <ul class="sidebar-links">
+                    <li><a href="#" id="addStudentBtn"><span class="icon"><i class="fas fa-user-plus"></i></span> <span>Добавить ученика</span></a></li>
+                    <li><a href="#" id="exportExcelBtn"><span class="icon"><i class="fas fa-file-excel"></i></span> <span>Экспорт в Excel</span></a></li>
+                    <li><a href="#" id="createReportBtn"><span class="icon"><i class="fas fa-file-export"></i></span> <span>Создать отчет</span></a></li>
+                    <li><a href="#" id="sendMessageBtn"><span class="icon"><i class="fas fa-envelope"></i></span> <span>Написать сообщение</span></a></li>
+                </ul>
+            </div>
+        </aside>
+        <main class="main-content">
+<section class="content-section" id="journals-section">
+                <div class="welcome-section">
+                    <h2>Электронные журналы</h2>
+                    <p>Ведение журналов успеваемости по предметам</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Журналы 10 "А" класса</h3>
+                        <select class="filter-select" id="subjectSelect">
+                            <option value="math">Математика</option>
+                            <option value="physics">Физика</option>
+                            <option value="informatics">Информатика</option>
+                            <option value="russian">Русский язык</option>
+                            <option value="literature">Литература</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table id="journalTable">
+                                <thead>
+                                    <tr>
+                                        <th>Ученик</th>
+                                        <th>Сентябрь</th>
+                                        <th>Октябрь</th>
+                                        <th>Ноябрь</th>
+                                        <th>Декабрь</th>
+                                        <th>Средний балл</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journalTableBody">
+                                    <!-- Данные будут загружены через JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+<!-- Модальное окно добавления ученика -->
+    <div class="modal" id="addStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Создание личного дела ученика</h3>
+                <button class="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lastName">Фамилия *</label>
+                            <input type="text" id="lastName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">Имя *</label>
+                            <input type="text" id="firstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="middleName">Отчество</label>
+                            <input type="text" id="middleName" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birthDate">Дата рождения *</label>
+                            <input type="date" id="birthDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Пол</label>
+                            <select id="gender" class="form-control">
+                                <option value="М">Мужской</option>
+                                <option value="Ж">Женский</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="class">Класс *</label>
+                            <select id="class" class="form-control" required>
+                                <option value="">Выберите класс</option>
+                                <option value="10А">10 "А"</option>
+                                <option value="10Б">10 "Б"</option>
+                                <option value="11А">11 "А"</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="admissionYear">Год поступления *</label>
+                            <input type="number" id="admissionYear" class="form-control" min="2000" max="2030" value="2023" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Адрес проживания *</label>
+                        <input type="text" id="address" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Данные родителей</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="parentName">ФИО родителя *</label>
+                                <input type="text" id="parentName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="parentPhone">Телефон *</label>
+                                <input type="tel" id="parentPhone" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="parentWork">Место работы</label>
+                            <input type="text" id="parentWork" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="medicalInfo">Медицинская информация</label>
+                        <textarea id="medicalInfo" class="form-control" rows="3" placeholder="Группа здоровья, аллергии, рекомендации врача"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalInfo">Дополнительная информация</label>
+                        <textarea id="additionalInfo" class="form-control" rows="2" placeholder="Хобби, увлечения, особые способности"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Отмена</button>
+                <button class="btn btn-primary" id="saveStudentBtn">Сохранить личное дело</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления оценки -->
+    <div class="modal" id="addGradeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Добавление оценки</h3>
+                <button class="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addGradeForm">
+                    <div class="form-group">
+                        <label for="gradeStudent">Ученик *</label>
+                        <select id="gradeStudent" class="form-control" required>
+                            <option value="">Выберите ученика</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gradeSubjectModal">Предмет *</label>
+                            <select id="gradeSubjectModal" class="form-control" required>
+                                <option value="">Выберите предмет</option>
+                                <option value="math">Математика</option>
+                                <option value="physics">Физика</option>
+                                <option value="informatics">Информатика</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="gradeValue">Оценка *</label>
+                            <select id="gradeValue" class="form-control" required>
+                                <option value="5">5 (Отлично)</option>
+                                <option value="4">4 (Хорошо)</option>
+                                <option value="3">3 (Удовлетворительно)</option>
+                                <option value="2">2 (Неудовлетворительно)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="gradeDate">Дата *</label>
+                        <input type="date" id="gradeDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gradeComment">Комментарий</label>
+                        <textarea id="gradeComment" class="form-control" rows="3" placeholder="Тема урока, тип работы и т.д."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Отмена</button>
+                <button class="btn btn-primary" id="saveGradeBtn">Сохранить оценку</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно просмотра оценок -->
+    <div class="modal" id="viewGradesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Оценки ученика</h3>
+                <button class="close-modal">×</button>
+            </div>
+            <div class="modal-body" id="viewGradesModalBody">
+                <!-- Данные об оценках будут подставлены через JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Системное уведомление -->
+    <div class="system-notification" id="systemNotification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Операция выполнена успешно!</span>
+    </div>
+
+    <!-- Мобильное уведомление -->
+    <div class="mobile-notification" id="mobileNotification">
+        <div>
+            <strong>Новое сообщение</strong>
+            <p>У вас новое сообщение от Петрова Алексея</p>
+        </div>
+        <button class="btn btn-outline btn-sm">Просмотреть</button>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
