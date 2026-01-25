@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎓 IThub School - Электронный журнал</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ЛОГИН СТРАНИЦА (НАЧАЛЬНАЯ) -->
+<div id="login-page" class="page active">
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-header">
+        <div class="login-logo">🎓</div>
+        <h1 class="login-title">IThub School</h1>
+        <p class="login-subtitle">Электронный журнал IT-школы</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="your@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="login-role">Роль</label>
+          <select id="login-role" required>
+            <option value="">Выберите роль</option>
+            <option value="student">Ученик</option>
+            <option value="teacher">Учитель</option>
+            <option value="parent">Родитель</option>
+            <option value="admin">Администратор</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Войти</button>
+      </form>
+
+      <div class="demo-users">
+        <p><strong>📋 Demo-аккаунты:</strong></p>
+        <p>👤 Ученик: alexey@ithub.school</p>
+        <p>👨‍🏫 Учитель: lyudmila@ithub.school</p>
+        <p>👨‍💼 Админ: admin@ithub.school</p>
+        <p><em>Пароль: не требуется</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ (СКРЫТО ДО ВХОДА) -->
+<div id="app-shell" style="display: none;">
+  <!-- ШАПКА -->
+  <header>
+    <a href="#" class="logo">IThub School</a>
+    <nav class="nav-menu">
+      <li><a href="#" data-page="dashboard">🏠 Дашборд</a></li>
+      <li><a href="#" data-page="grades">📊 Оценки</a></li>
+      <li><a href="#" data-page="schedule">📅 Расписание</a></li>
+      <li><a href="#" data-page="homework">📝 Задания</a></li>
+      <li><a href="#" data-page="profile">👤 Профиль</a></li>
+      <li id="admin-nav" style="display: none;"><a href="#" data-page="admin">⚙️ Админ</a></li>
+    </nav>
+    <button class="burger-menu">☰</button>
+    <div class="user-info">
+      <span class="user-name">Гость</span>
+      <span class="user-role"></span>
+      <button class="logout-btn">Выход</button>
+    </div>
+  </header>
+
+  <!-- БОКОВАЯ ПАНЕЛЬ -->
+  <aside>
+    <nav class="sidebar-nav">
+      <li><a href="#" data-page="dashboard">🏠 Дашборд</a></li>
+      <li><a href="#" data-page="grades">📊 Оценки</a></li>
+      <li><a href="#" data-page="schedule">📅 Расписание</a></li>
+      <li><a href="#" data-page="homework">📝 Задания</a></li>
+      <li><a href="#" data-page="profile">👤 Профиль</a></li>
+      <li id="admin-nav-sidebar" style="display: none;"><a href="#" data-page="admin">⚙️ Администрация</a></li>
+    </nav>
+  </aside>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <main>
+    <div class="container">
+      <!-- ДАШБОРД -->
+      <div id="dashboard-page" class="page">
+        <h1>🏠 Дашборд</h1>
+        <div id="dashboard-content"></div>
+      </div>
+
+      <!-- ОЦЕНКИ -->
+      <div id="grades-page" class="page">
+        <h1>📊 Оценки</h1>
+        <div id="grades-content"></div>
+      </div>
+
+      <!-- РАСПИСАНИЕ -->
+      <div id="schedule-page" class="page">
+        <h1>📅 Расписание</h1>
+        <div id="schedule-content"></div>
+      </div>
+
+      <!-- ЗАДАНИЯ -->
+      <div id="homework-page" class="page">
+        <h1>📝 Задания</h1>
+        <div id="homework-content"></div>
+      </div>
+
+      <!-- ПРОФИЛЬ -->
+      <div id="profile-page" class="page">
+        <h1>👤 Профиль</h1>
+        <div id="profile-content"></div>
+      </div>
+
+      <!-- АДМИН-ПАНЕЛЬ -->
+      <div id="admin-page" class="page">
+        <h1>⚙️ Администрация</h1>
+        <div id="admin-content"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
+
+<!-- Модаль добавления оценки -->
+<div id="addGradeModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Добавить оценку</h2>
+      <button type="button" class="modal-close">✕</button>
+    </div>
+    <form id="add-grade-form">
+      <div class="form-group">
+        <label for="grade-student">Ученик</label>
+        <select id="grade-student" required>
+          <option value="">Выберите ученика</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="grade-subject">Предмет</label>
+        <select id="grade-subject" required>
+          <option value="">Выберите предмет</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="grade-value">Оценка</label>
+        <select id="grade-value" required>
+          <option value="">Выберите оценку</option>
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="grade-note">Примечание</label>
+        <textarea id="grade-note" placeholder="Комментарий к оценке..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="APP.closeModal('addGradeModal')">Отмена</button>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Модаль добавления задания -->
+<div id="addHomeworkModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Добавить задание</h2>
+      <button type="button" class="modal-close">✕</button>
+    </div>
+    <form id="add-homework-form">
+      <div class="form-group">
+        <label for="hw-subject">Предмет</label>
+        <select id="hw-subject" required>
+          <option value="">Выберите предмет</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="hw-title">Название задания</label>
+        <input type="text" id="hw-title" placeholder="Например: Написать программу на Python" required>
+      </div>
+      <div class="form-group">
+        <label for="hw-description">Описание</label>
+        <textarea id="hw-description" placeholder="Подробное описание задания..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="hw-deadline">Дедлайн</label>
+        <input type="date" id="hw-deadline" required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="APP.closeModal('addHomeworkModal')">Отмена</button>
+        <button type="submit" class="btn btn-primary">Создать</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ЗАГРУЗКА СКРИПТОВ -->
+<script src="script.js"></script>
+
+<script>
+// Переопределить логику входа для показа приложения
+document.addEventListener('DOMContentLoaded', function() {
+  // Функция для переключения интерфейса
+  function toggleAppShell(show) {
+    document.getElementById('login-page').style.display = show ? 'none' : 'block';
+    document.getElementById('app-shell').style.display = show ? 'block' : 'none';
+    
+    if (show && APP.user) {
+      if (APP.user.role === 'admin') {
+        document.getElementById('admin-nav').style.display = 'block';
+        document.getElementById('admin-nav-sidebar').style.display = 'block';
+      } else {
+        document.getElementById('admin-nav').style.display = 'none';
+        document.getElementById('admin-nav-sidebar').style.display = 'none';
+      }
+      // Инициализировать опции форм
+      initFormOptions();
+    }
+  }
+
+  function initFormOptions() {
+    // Наполнить опции студентов
+    const studentSelect = document.getElementById('grade-student');
+    if (studentSelect) {
+      studentSelect.innerHTML = '<option value="">Выберите ученика</option>' +
+        APP.data.students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    }
+
+    // Наполнить опции предметов
+    const subjectSelects = [document.getElementById('grade-subject'), document.getElementById('hw-subject')];
+    subjectSelects.forEach(select => {
+      if (select) {
+        select.innerHTML = '<option value="">Выберите предмет</option>' +
+          APP.data.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      }
+    });
+  }
+
+  // Переопределить методы входа/выхода
+  const originalLogin = APP.login;
+  APP.login = function(email, role) {
+    const result = originalLogin.call(this, email, role);
+    if (result) {
+      toggleAppShell(true);
+    }
+    return result;
+  };
+
+  const originalLogout = APP.logout;
+  APP.logout = function() {
+    originalLogout.call(this);
+    toggleAppShell(false);
+  };
+
+  // Проверить, авторизован ли пользователь
+  if (APP.user) {
+    toggleAppShell(true);
+  }
+});
+</script>
+
+</body>
+</html>

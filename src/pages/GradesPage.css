@@ -1,0 +1,460 @@
+.grades-page {
+  padding: var(--spacing-lg);
+  background: var(--gradient-1);
+  min-height: 100vh;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Header */
+.grades-header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app.light-mode .grades-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(157, 123, 209, 0.2);
+}
+
+.grades-header h1 {
+  font-size: 2rem;
+  background: var(--gradient-2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.grades-header p {
+  color: var(--text-light);
+  margin: 0;
+}
+
+.header-stats {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(157, 123, 209, 0.1);
+  border-radius: var(--radius-lg);
+}
+
+.stat-info .label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-info .value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+/* Controls */
+.grades-controls {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.app.light-mode .grades-controls {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(157, 123, 209, 0.15);
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 0 var(--spacing-md);
+  color: var(--text-light);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: var(--spacing-md) var(--spacing-sm);
+  color: var(--text-dark);
+  font-size: 1rem;
+  outline: none;
+}
+
+.app.dark-mode .search-box input {
+  color: var(--text-white);
+}
+
+.search-box input::placeholder {
+  color: var(--text-light);
+}
+
+.filters {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+}
+
+.filter-group select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  cursor: pointer;
+  min-width: 150px;
+  transition: var(--transition);
+}
+
+.app.dark-mode .filter-group select {
+  background: var(--bg-dark-secondary);
+  color: var(--text-white);
+}
+
+.filter-group select:hover {
+  border-color: var(--primary);
+}
+
+/* Add Grade Form */
+.add-grade-form {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.app.light-mode .add-grade-form {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(157, 123, 209, 0.15);
+}
+
+.add-grade-form h3 {
+  margin-top: 0;
+  color: var(--text-dark);
+}
+
+.app.dark-mode .add-grade-form h3 {
+  color: var(--text-white);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.add-grade-form input,
+.add-grade-form select {
+  padding: var(--spacing-md);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-dark);
+  transition: var(--transition);
+}
+
+.app.dark-mode .add-grade-form input,
+.app.dark-mode .add-grade-form select {
+  background: var(--bg-dark-secondary);
+  color: var(--text-white);
+}
+
+.add-grade-form input:focus,
+.add-grade-form select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(157, 123, 209, 0.2);
+}
+
+/* Grades Table */
+.grades-table-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin-bottom: var(--spacing-xl);
+}
+
+.app.light-mode .grades-table-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(157, 123, 209, 0.15);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.grades-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grades-table thead {
+  background: linear-gradient(135deg, rgba(157, 123, 209, 0.2), rgba(199, 125, 202, 0.1));
+}
+
+.grades-table th {
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-dark);
+  border-bottom: 2px solid var(--glass-border);
+}
+
+.app.dark-mode .grades-table th {
+  color: var(--text-white);
+}
+
+.grades-table tbody tr {
+  transition: var(--transition);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.grades-table tbody tr:hover {
+  background: rgba(157, 123, 209, 0.1);
+}
+
+.grades-table td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--text-dark);
+}
+
+.app.dark-mode .grades-table td {
+  color: var(--text-light);
+}
+
+.subject-cell {
+  font-weight: 600;
+}
+
+.date-cell {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.grade-badge {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  min-width: 40px;
+}
+
+.grade-5 {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.grade-4 {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.grade-3 {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.grade-2 {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.actions-cell {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  color: var(--text-dark);
+}
+
+.app.dark-mode .btn-icon {
+  color: var(--text-white);
+}
+
+.btn-edit:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.no-data {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--text-light);
+}
+
+/* Grade Statistics */
+.grade-stats {
+  margin-top: var(--spacing-xl);
+}
+
+.grade-stats h2 {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-dark);
+}
+
+.app.dark-mode .grade-stats h2 {
+  color: var(--text-white);
+}
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.subject-stat {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.app.light-mode .subject-stat {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(157, 123, 209, 0.15);
+}
+
+.subject-stat:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(157, 123, 209, 0.2);
+}
+
+.subject-stat h4 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-dark);
+}
+
+.app.dark-mode .subject-stat h4 {
+  color: var(--text-white);
+}
+
+.subject-stat .avg-grade {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.subject-stat .count {
+  color: var(--text-light);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grades-page {
+    padding: var(--spacing-md);
+  }
+
+  .grades-header {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-lg);
+  }
+
+  .grades-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-stats {
+    width: 100%;
+  }
+
+  .grades-controls {
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .filters {
+    width: 100%;
+  }
+
+  .filter-group select {
+    width: 100%;
+  }
+
+  .grades-table th,
+  .grades-table td {
+    padding: var(--spacing-sm);
+    font-size: 0.9rem;
+  }
+
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .grades-table th:nth-child(n+4),
+  .grades-table td:nth-child(n+4) {
+    display: none;
+  }
+}
