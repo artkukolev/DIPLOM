@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduManager - Hawk Design Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Hawk-inspired Corporate Design System */
+        :root {
+            /* Hawk Color Palette - Modern Corporate */
+            --hawk-primary: #1a1a1a;
+            --hawk-primary-hover: #2a2a2a;
+            --hawk-primary-dark: #0a0a0a;
+
+            --hawk-secondary: #6366f1;
+            --hawk-secondary-hover: #818cf8;
+            --hawk-secondary-dark: #4f46e5;
+
+            --hawk-accent: #f59e0b;
+            --hawk-accent-hover: #fbbf24;
+
+            --hawk-success: #10b981;
+            --hawk-error: #ef4444;
+            --hawk-warning: #f59e0b;
+
+            /* Background Colors - Corporate */
+            --hawk-background-primary: #ffffff;
+            --hawk-background-secondary: #f8fafc;
+            --hawk-background-tertiary: #f1f5f9;
+            --hawk-background-dark: #0f172a;
+            --hawk-background-darker: #020617;
+
+            /* Text Colors */
+            --hawk-text-primary: #1e293b;
+            --hawk-text-secondary: #64748b;
+            --hawk-text-tertiary: #94a3b8;
+            --hawk-text-inverse: #ffffff;
+            --hawk-text-muted: #cbd5e1;
+
+            /* Neutral Colors */
+            --hawk-gray-50: #f8fafc;
+            --hawk-gray-100: #f1f5f9;
+            --hawk-gray-200: #e2e8f0;
+            --hawk-gray-300: #cbd5e1;
+            --hawk-gray-400: #94a3b8;
+            --hawk-gray-500: #64748b;
+            --hawk-gray-600: #475569;
+            --hawk-gray-700: #334155;
+            --hawk-gray-800: #1e293b;
+            --hawk-gray-900: #0f172a;
+
+            /* UI Element Colors */
+            --hawk-border: #e2e8f0;
+            --hawk-border-hover: #cbd5e1;
+            --hawk-border-focus: #6366f1;
+
+            /* Shadows - Modern and subtle */
+            --hawk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --hawk-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --hawk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --hawk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --hawk-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --hawk-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+            /* Border Radius - Modern and clean */
+            --hawk-radius: 8px;
+            --hawk-radius-md: 12px;
+            --hawk-radius-lg: 16px;
+            --hawk-radius-xl: 20px;
+            --hawk-radius-2xl: 24px;
+
+            /* Spacing - Generous and balanced */
+            --hawk-space-1: 4px;
+            --hawk-space-2: 8px;
+            --hawk-space-3: 12px;
+            --hawk-space-4: 16px;
+            --hawk-space-5: 20px;
+            --hawk-space-6: 24px;
+            --hawk-space-8: 32px;
+            --hawk-space-10: 40px;
+            --hawk-space-12: 48px;
+            --hawk-space-16: 64px;
+            --hawk-space-20: 80px;
+            --hawk-space-24: 96px;
+            --hawk-space-32: 128px;
+
+            /* Typography - Modern corporate */
+            --hawk-font-size-xs: 12px;
+            --hawk-font-size-sm: 14px;
+            --hawk-font-size-base: 16px;
+            --hawk-font-size-lg: 18px;
+            --hawk-font-size-xl: 20px;
+            --hawk-font-size-2xl: 24px;
+            --hawk-font-size-3xl: 30px;
+            --hawk-font-size-4xl: 36px;
+            --hawk-font-size-5xl: 48px;
+            --hawk-font-size-6xl: 60px;
+            --hawk-font-size-7xl: 72px;
+
+            --hawk-font-weight-normal: 400;
+            --hawk-font-weight-medium: 500;
+            --hawk-font-weight-semibold: 600;
+            --hawk-font-weight-bold: 700;
+            --hawk-font-weight-extrabold: 800;
+
+            /* Line Heights */
+            --hawk-leading-tight: 1.25;
+            --hawk-leading-snug: 1.375;
+            --hawk-leading-normal: 1.5;
+            --hawk-leading-relaxed: 1.625;
+            --hawk-leading-loose: 2;
+
+            /* Transitions */
+            --hawk-transition-fast: 150ms ease-in-out;
+            --hawk-transition-normal: 250ms ease-in-out;
+            --hawk-transition-slow: 350ms ease-in-out;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: var(--hawk-background-primary);
+            color: var(--hawk-text-primary);
+            font-size: var(--hawk-font-size-base);
+            line-height: var(--hawk-leading-normal);
+            font-weight: var(--hawk-font-weight-normal);
+        }
+
+        /* Custom scrollbar - Hawk style */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--hawk-background-secondary);
+            border-radius: var(--hawk-radius);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--hawk-gray-400);
+            border-radius: var(--hawk-radius);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--hawk-gray-500);
+        }
+
+        /* Animations - Modern and smooth */
+        @keyframes hawkFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes hawkSlideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes hawkPulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Hawk Component Classes */
+
+        /* Layout */
+        .hawk-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--hawk-space-4);
+        }
+
+        .hawk-section {
+            padding: var(--hawk-space-16) 0;
+        }
+
+        .hawk-flex {
+            display: flex;
+        }
+
+        .hawk-flex-col {
+            flex-direction: column;
+        }
+
+        .hawk-items-center {
+            align-items: center;
+        }
+
+        .hawk-justify-center {
+            justify-content: center;
+        }
+
+        .hawk-justify-between {
+            justify-content: space-between;
+        }
+
+        .hawk-space-x-4 > * + * {
+            margin-left: var(--hawk-space-4);
+        }
+
+        .hawk-space-y-8 > * + * {
+            margin-top: var(--hawk-space-8);
+        }
+
+        /* Typography */
+        .hawk-text-xs { font-size: var(--hawk-font-size-xs); }
+        .hawk-text-sm { font-size: var(--hawk-font-size-sm); }
+        .hawk-text-base { font-size: var(--hawk-font-size-base); }
+        .hawk-text-lg { font-size: var(--hawk-font-size-lg); }
+        .hawk-text-xl { font-size: var(--hawk-font-size-xl); }
+        .hawk-text-2xl { font-size: var(--hawk-font-size-2xl); }
+        .hawk-text-3xl { font-size: var(--hawk-font-size-3xl); }
+        .hawk-text-4xl { font-size: var(--hawk-font-size-4xl); }
+        .hawk-text-5xl { font-size: var(--hawk-font-size-5xl); }
+
+        .hawk-font-normal { font-weight: var(--hawk-font-weight-normal); }
+        .hawk-font-medium { font-weight: var(--hawk-font-weight-medium); }
+        .hawk-font-semibold { font-weight: var(--hawk-font-weight-semibold); }
+        .hawk-font-bold { font-weight: var(--hawk-font-weight-bold); }
+        .hawk-font-extrabold { font-weight: var(--hawk-font-weight-extrabold); }
+
+        .hawk-text-primary { color: var(--hawk-text-primary); }
+        .hawk-text-secondary { color: var(--hawk-text-secondary); }
+        .hawk-text-tertiary { color: var(--hawk-text-tertiary); }
+        .hawk-text-inverse { color: var(--hawk-text-inverse); }
+        .hawk-text-muted { color: var(--hawk-text-muted); }
+
+        .hawk-leading-tight { line-height: var(--hawk-leading-tight); }
+        .hawk-leading-normal { line-height: var(--hawk-leading-normal); }
+        .hawk-leading-relaxed { line-height: var(--hawk-leading-relaxed); }
+
+        /* Cards */
+        .hawk-card {
+            background: var(--hawk-background-primary);
+            border: 1px solid var(--hawk-border);
+            border-radius: var(--hawk-radius-lg);
+            box-shadow: var(--hawk-shadow);
+            padding: var(--hawk-space-6);
+            transition: var(--hawk-transition-normal);
+        }
+
+        .hawk-card:hover {
+            box-shadow: var(--hawk-shadow-lg);
+            border-color: var(--hawk-border-hover);
+        }
+
+        .hawk-card-dark {
+            background: var(--hawk-background-dark);
+            color: var(--hawk-text-inverse);
+            border: 1px solid var(--hawk-gray-700);
+        }
+
+        /* Buttons */
+        .hawk-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--hawk-space-3) var(--hawk-space-6);
+            border-radius: var(--hawk-radius);
+            font-weight: var(--hawk-font-weight-medium);
+            font-size: var(--hawk-font-size-sm);
+            transition: var(--hawk-transition-fast);
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+
+        .hawk-btn-primary {
+            background: var(--hawk-secondary);
+            color: var(--hawk-text-inverse);
+        }
+
+        .hawk-btn-primary:hover {
+            background: var(--hawk-secondary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--hawk-shadow-md);
+        }
+
+        .hawk-btn-secondary {
+            background: var(--hawk-background-secondary);
+            color: var(--hawk-text-primary);
+            border: 1px solid var(--hawk-border);
+        }
+
+        .hawk-btn-secondary:hover {
+            background: var(--hawk-background-tertiary);
+            border-color: var(--hawk-border-hover);
+        }
+
+        .hawk-btn-ghost {
+            background: transparent;
+            color: var(--hawk-text-secondary);
+        }
+
+        .hawk-btn-ghost:hover {
+            background: var(--hawk-background-secondary);
+            color: var(--hawk-text-primary);
+        }
+
+        /* Forms */
+        .hawk-input {
+            width: 100%;
+            padding: var(--hawk-space-3) var(--hawk-space-4);
+            border: 1px solid var(--hawk-border);
+            border-radius: var(--hawk-radius);
+            background: var(--hawk-background-primary);
+            color: var(--hawk-text-primary);
+            font-size: var(--hawk-font-size-base);
+            transition: var(--hawk-transition-fast);
+        }
+
+        .hawk-input:focus {
+            outline: none;
+            border-color: var(--hawk-border-focus);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .hawk-input::placeholder {
+            color: var(--hawk-text-tertiary);
+        }
+
+        /* Animations */
+        .hawk-animate-fade-in-up {
+            animation: hawkFadeInUp 0.6s ease-out;
+        }
+
+        .hawk-animate-slide-in-right {
+            animation: hawkSlideInRight 0.4s ease-out;
+        }
+
+        .hawk-animate-pulse {
+            animation: hawkPulse 2s infinite;
+        }
+
+        /* Hero Section */
+        .hawk-hero {
+            background: linear-gradient(135deg, var(--hawk-background-primary) 0%, var(--hawk-background-secondary) 100%);
+            padding: var(--hawk-space-24) 0;
+            text-align: center;
+        }
+
+        .hawk-hero-title {
+            font-size: var(--hawk-font-size-6xl);
+            font-weight: var(--hawk-font-weight-extrabold);
+            color: var(--hawk-text-primary);
+            margin-bottom: var(--hawk-space-6);
+            line-height: var(--hawk-leading-tight);
+        }
+
+        .hawk-hero-subtitle {
+            font-size: var(--hawk-font-size-xl);
+            color: var(--hawk-text-secondary);
+            max-width: 600px;
+            margin: 0 auto var(--hawk-space-8);
+            line-height: var(--hawk-leading-relaxed);
+        }
+
+        .hawk-hero-cta {
+            display: inline-flex;
+            gap: var(--hawk-space-4);
+        }
+
+        /* Navigation */
+        .hawk-nav {
+            background: var(--hawk-background-primary);
+            border-bottom: 1px solid var(--hawk-border);
+            padding: var(--hawk-space-4) 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+
+        .hawk-nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--hawk-space-4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hawk-nav-logo {
+            font-size: var(--hawk-font-size-xl);
+            font-weight: var(--hawk-font-weight-bold);
+            color: var(--hawk-text-primary);
+        }
+
+        .hawk-nav-menu {
+            display: flex;
+            gap: var(--hawk-space-8);
+            align-items: center;
+        }
+
+        .hawk-nav-link {
+            color: var(--hawk-text-secondary);
+            text-decoration: none;
+            font-weight: var(--hawk-font-weight-medium);
+            transition: var(--hawk-transition-fast);
+        }
+
+        .hawk-nav-link:hover {
+            color: var(--hawk-text-primary);
+        }
+
+        .hawk-nav-link.active {
+            color: var(--hawk-secondary);
+        }
+
+        /* Footer */
+        .hawk-footer {
+            background: var(--hawk-background-dark);
+            color: var(--hawk-text-inverse);
+            padding: var(--hawk-space-16) 0 var(--hawk-space-8);
+        }
+
+        .hawk-footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--hawk-space-4);
+        }
+
+        .hawk-footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--hawk-space-8);
+            margin-bottom: var(--hawk-space-8);
+        }
+
+        .hawk-footer-section h3 {
+            font-size: var(--hawk-font-size-lg);
+            font-weight: var(--hawk-font-weight-semibold);
+            margin-bottom: var(--hawk-space-4);
+            color: var(--hawk-text-inverse);
+        }
+
+        .hawk-footer-link {
+            color: var(--hawk-text-muted);
+            text-decoration: none;
+            display: block;
+            margin-bottom: var(--hawk-space-2);
+            transition: var(--hawk-transition-fast);
+        }
+
+        .hawk-footer-link:hover {
+            color: var(--hawk-text-inverse);
+        }
+
+        .hawk-footer-bottom {
+            border-top: 1px solid var(--hawk-gray-700);
+            padding-top: var(--hawk-space-8);
+            text-align: center;
+            color: var(--hawk-text-muted);
+        }
+
+        /* Stats cards */
+        .hawk-stat-card {
+            background: var(--hawk-background-primary);
+            border-radius: var(--hawk-radius-lg);
+            padding: var(--hawk-space-6);
+            border: 1px solid var(--hawk-border);
+            transition: var(--hawk-transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hawk-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--hawk-secondary), var(--hawk-accent));
+        }
+
+        .hawk-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hawk-shadow-lg);
+        }
+
+        /* Grid utilities */
+        .hawk-grid {
+            display: grid;
+        }
+
+        .hawk-grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .hawk-grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .hawk-grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .hawk-grid-cols-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .hawk-gap-4 {
+            gap: var(--hawk-space-4);
+        }
+
+        .hawk-gap-6 {
+            gap: var(--hawk-space-6);
+        }
+
+        .hawk-gap-8 {
+            gap: var(--hawk-space-8);
+        }
+
+        /* Margin utilities */
+        .hawk-mb-4 {
+            margin-bottom: var(--hawk-space-4);
+        }
+
+        .hawk-mb-6 {
+            margin-bottom: var(--hawk-space-6);
+        }
+
+        .hawk-mb-8 {
+            margin-bottom: var(--hawk-space-8);
+        }
+
+        /* Padding utilities */
+        .hawk-p-4 {
+            padding: var(--hawk-space-4);
+        }
+
+        .hawk-p-6 {
+            padding: var(--hawk-space-6);
+        }
+
+        .hawk-p-8 {
+            padding: var(--hawk-space-8);
+        }
+
+        /* Width utilities */
+        .hawk-w-full {
+            width: 100%;
+        }
+
+        /* Text alignment */
+        .hawk-text-center {
+            text-align: center;
+        }
+
+        /* Logo styles */
+        .hawk-logo {
+            font-size: var(--hawk-font-size-2xl);
+            font-weight: var(--hawk-font-weight-bold);
+            background: linear-gradient(135deg, var(--hawk-secondary), var(--hawk-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hawk-nav-menu {
+                display: none;
+            }
+
+            .hawk-hero-title {
+                font-size: var(--hawk-font-size-4xl);
+            }
+
+            .hawk-grid-cols-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .hawk-footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="hawk-nav">
+        <div class="hawk-nav-container">
+            <div class="hawk-nav-logo">EduManager</div>
+            <div class="hawk-nav-menu">
+                <a href="#home" class="hawk-nav-link active">Главная</a>
+                <a href="#features" class="hawk-nav-link">Возможности</a>
+                <a href="#about" class="hawk-nav-link">О нас</a>
+                <a href="#contact" class="hawk-nav-link">Контакты</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hawk-hero" id="home">
+        <div class="hawk-container">
+            <h1 class="hawk-hero-title hawk-animate-fade-in-up">
+                Профессиональная система управления образованием
+            </h1>
+            <p class="hawk-hero-subtitle hawk-animate-fade-in-up">
+                Современная платформа для эффективного управления учебным процессом,
+                отслеживания успеваемости и коммуникации между участниками образовательного процесса.
+            </p>
+            <div class="hawk-hero-cta hawk-animate-fade-in-up">
+                <a href="#features" class="hawk-btn hawk-btn-primary">
+                    Узнать больше
+                </a>
+                <a href="#contact" class="hawk-btn hawk-btn-secondary">
+                    Связаться с нами
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="hawk-section" id="features">
+        <div class="hawk-container">
+            <div class="hawk-text-center hawk-mb-8">
+                <h2 class="hawk-text-4xl hawk-font-bold hawk-mb-4">
+                    Возможности платформы
+                </h2>
+                <p class="hawk-text-xl hawk-text-secondary hawk-leading-relaxed">
+                    Полный набор инструментов для современного образования
+                </p>
+            </div>
+
+            <div class="hawk-grid hawk-grid-cols-1 md:hawk-grid-cols-2 lg:hawk-grid-cols-3 hawk-gap-8">
+                <div class="hawk-card hawk-animate-fade-in-up">
+                    <div class="hawk-text-4xl hawk-mb-4">📚</div>
+                    <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-2">
+                        Управление журналами
+                    </h3>
+                    <p class="hawk-text-secondary">
+                        Ведение электронных журналов успеваемости с автоматическими расчетами
+                        средних баллов и статистики посещаемости.
+                    </p>
+                </div>
+
+                <div class="hawk-card hawk-animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="hawk-text-4xl hawk-mb-4">👥</div>
+                    <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-2">
+                        База учащихся
+                    </h3>
+                    <p class="hawk-text-secondary">
+                        Полная информация о студентах, их академической успеваемости
+                        и личных данных в единой системе.
+                    </p>
+                </div>
+
+                <div class="hawk-card hawk-animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="hawk-text-4xl hawk-mb-4">📊</div>
+                    <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-2">
+                        Аналитика и отчеты
+                    </h3>
+                    <p class="hawk-text-secondary">
+                        Подробные отчеты по успеваемости, посещаемости и другим
+                        ключевым показателям образовательного процесса.
+                    </p>
+                </div>
+
+                <div class="hawk-card hawk-animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="hawk-text-4xl hawk-mb-4">💬</div>
+                    <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-2">
+                        Коммуникации
+                    </h3>
+                    <p class="hawk-text-secondary">
+                        Встроенная система сообщений для общения между преподавателями,
+                        студентами и родителями.
+                    </p>
+                </div>
+
+                <div class="hawk-card hawk-animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="hawk-text-4xl hawk-mb-4">📅</div>
+                    <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-2">
+                        Расписание
+                    </h3>
+                    <p class="hawk-text-secondary">
+                        Управление учебным расписанием с возможностью онлайн-доступа
+                        для всех участников образовательного процесса.
+                    </p>
+                </div>
+
+                <div class="hawk-card hawk-animate-fade-in-up" style="animation-delay: 0.5s;">
+                    <div class="hawk-text-4xl hawk-mb-4">📰</div>
+                    <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-2">
+                        Школьная газета
+                    </h3>
+                    <p class="hawk-text-secondary">
+                        Платформа для публикации новостей, достижений и важных
+                        событий школьной жизни.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="hawk-section" style="background: var(--hawk-background-secondary);">
+        <div class="hawk-container">
+            <div class="hawk-grid hawk-grid-cols-2 md:hawk-grid-cols-4 hawk-gap-8">
+                <div class="hawk-stat-card hawk-text-center hawk-animate-fade-in-up">
+                    <div class="hawk-text-3xl hawk-font-bold hawk-mb-2" style="color: var(--hawk-secondary);">500+</div>
+                    <div class="hawk-text-secondary">Студентов</div>
+                </div>
+                <div class="hawk-stat-card hawk-text-center hawk-animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="hawk-text-3xl hawk-font-bold hawk-mb-2" style="color: var(--hawk-secondary);">50+</div>
+                    <div class="hawk-text-secondary">Преподавателей</div>
+                </div>
+                <div class="hawk-stat-card hawk-text-center hawk-animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="hawk-text-3xl hawk-font-bold hawk-mb-2" style="color: var(--hawk-secondary);">1000+</div>
+                    <div class="hawk-text-secondary">Записей</div>
+                </div>
+                <div class="hawk-stat-card hawk-text-center hawk-animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="hawk-text-3xl hawk-font-bold hawk-mb-2" style="color: var(--hawk-secondary);">95%</div>
+                    <div class="hawk-text-secondary">Успеваемость</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="hawk-section" id="about">
+        <div class="hawk-container">
+            <div class="hawk-grid hawk-grid-cols-1 lg:hawk-grid-cols-2 hawk-gap-12 hawk-items-center">
+                <div class="hawk-animate-fade-in-up">
+                    <h2 class="hawk-text-4xl hawk-font-bold hawk-mb-6">
+                        О EduManager
+                    </h2>
+                    <p class="hawk-text-lg hawk-text-secondary hawk-leading-relaxed hawk-mb-6">
+                        EduManager - это современная платформа для управления образовательным процессом,
+                        разработанная с учетом потребностей современных учебных заведений.
+                        Наша система объединяет все аспекты школьной жизни в едином интерфейсе.
+                    </p>
+                    <p class="hawk-text-lg hawk-text-secondary hawk-leading-relaxed hawk-mb-8">
+                        Мы стремимся сделать образование более эффективным, прозрачным и доступным
+                        для всех участников учебного процесса - от учеников до администрации.
+                    </p>
+                    <div class="hawk-flex hawk-space-x-4">
+                        <a href="#contact" class="hawk-btn hawk-btn-primary">
+                            Начать работу
+                        </a>
+                        <a href="#features" class="hawk-btn hawk-btn-ghost">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+                <div class="hawk-animate-slide-in-right">
+                    <div class="hawk-card hawk-p-8">
+                        <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-4">
+                            Преимущества системы
+                        </h3>
+                        <ul class="hawk-space-y-3">
+                            <li class="hawk-flex hawk-items-center">
+                                <span class="hawk-text-secondary hawk-mr-3">✓</span>
+                                <span>Интуитивно понятный интерфейс</span>
+                            </li>
+                            <li class="hawk-flex hawk-items-center">
+                                <span class="hawk-text-secondary hawk-mr-3">✓</span>
+                                <span>Безопасность данных</span>
+                            </li>
+                            <li class="hawk-flex hawk-items-center">
+                                <span class="hawk-text-secondary hawk-mr-3">✓</span>
+                                <span>Мобильная адаптация</span>
+                            </li>
+                            <li class="hawk-flex hawk-items-center">
+                                <span class="hawk-text-secondary hawk-mr-3">✓</span>
+                                <span>Регулярные обновления</span>
+                            </li>
+                            <li class="hawk-flex hawk-items-center">
+                                <span class="hawk-text-secondary hawk-mr-3">✓</span>
+                                <span>Техническая поддержка</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="hawk-section" id="contact" style="background: var(--hawk-background-dark); color: var(--hawk-text-inverse);">
+        <div class="hawk-container">
+            <div class="hawk-text-center hawk-mb-8">
+                <h2 class="hawk-text-4xl hawk-font-bold hawk-mb-4">
+                    Свяжитесь с нами
+                </h2>
+                <p class="hawk-text-xl hawk-text-muted hawk-leading-relaxed">
+                    Готовы начать использовать EduManager в вашем учебном заведении?
+                </p>
+            </div>
+
+            <div class="hawk-grid hawk-grid-cols-1 lg:hawk-grid-cols-2 hawk-gap-12">
+                <div class="hawk-animate-fade-in-up">
+                    <h3 class="hawk-text-2xl hawk-font-semibold hawk-mb-6">
+                        Контактная информация
+                    </h3>
+                    <div class="hawk-space-y-4">
+                        <div class="hawk-flex hawk-items-center">
+                            <span class="hawk-text-2xl hawk-mr-4">📧</span>
+                            <div>
+                                <div class="hawk-font-medium">Email</div>
+                                <div class="hawk-text-muted">info@edumanager.ru</div>
+                            </div>
+                        </div>
+                        <div class="hawk-flex hawk-items-center">
+                            <span class="hawk-text-2xl hawk-mr-4">📱</span>
+                            <div>
+                                <div class="hawk-font-medium">Телефон</div>
+                                <div class="hawk-text-muted">+7 (495) 123-45-67</div>
+                            </div>
+                        </div>
+                        <div class="hawk-flex hawk-items-center">
+                            <span class="hawk-text-2xl hawk-mr-4">📍</span>
+                            <div>
+                                <div class="hawk-font-medium">Адрес</div>
+                                <div class="hawk-text-muted">Москва, ул. Образования, д. 1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hawk-animate-slide-in-right">
+                    <form class="hawk-card hawk-p-6" style="background: var(--hawk-background-primary); color: var(--hawk-text-primary);">
+                        <h3 class="hawk-text-xl hawk-font-semibold hawk-mb-6">
+                            Отправить сообщение
+                        </h3>
+                        <div class="hawk-space-y-4">
+                            <div>
+                                <label class="hawk-block hawk-font-medium hawk-mb-2">Имя</label>
+                                <input type="text" class="hawk-input" placeholder="Ваше имя">
+                            </div>
+                            <div>
+                                <label class="hawk-block hawk-font-medium hawk-mb-2">Email</label>
+                                <input type="email" class="hawk-input" placeholder="ваш@email.com">
+                            </div>
+                            <div>
+                                <label class="hawk-block hawk-font-medium hawk-mb-2">Сообщение</label>
+                                <textarea class="hawk-input" rows="4" placeholder="Ваше сообщение"></textarea>
+                            </div>
+                            <button type="submit" class="hawk-btn hawk-btn-primary hawk-w-full">
+                                Отправить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="hawk-footer">
+        <div class="hawk-footer-container">
+            <div class="hawk-footer-grid">
+                <div class="hawk-footer-section">
+                    <h3>EduManager</h3>
+                    <p class="hawk-text-muted hawk-leading-relaxed">
+                        Современная платформа для управления образовательным процессом.
+                        Делаем образование эффективнее и доступнее.
+                    </p>
+                </div>
+                <div class="hawk-footer-section">
+                    <h3>Продукт</h3>
+                    <a href="#features" class="hawk-footer-link">Возможности</a>
+                    <a href="#about" class="hawk-footer-link">О нас</a>
+                    <a href="#contact" class="hawk-footer-link">Контакты</a>
+                </div>
+                <div class="hawk-footer-section">
+                    <h3>Поддержка</h3>
+                    <a href="#" class="hawk-footer-link">Документация</a>
+                    <a href="#" class="hawk-footer-link">FAQ</a>
+                    <a href="#" class="hawk-footer-link">Техподдержка</a>
+                </div>
+                <div class="hawk-footer-section">
+                    <h3>Компания</h3>
+                    <a href="#" class="hawk-footer-link">О нас</a>
+                    <a href="#" class="hawk-footer-link">Карьера</a>
+                    <a href="#" class="hawk-footer-link">Блог</a>
+                </div>
+            </div>
+            <div class="hawk-footer-bottom">
+                <p>&copy; 2024 EduManager. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('.hawk-nav');
+            if (window.scrollY > 100) {
+                nav.style.boxShadow = 'var(--hawk-shadow)';
+            } else {
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.hawk-animate-fade-in-up, .hawk-animate-slide-in-right').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">/Users/artemkukolev/Desktop/DIPLOM/hawk-demo.html
