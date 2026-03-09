@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#7C3AED" />
+  <meta name="description" content="Демонстрационная страница EduManager" />
+  <title>Демонстрация - EduManager</title>
+</head>
+<body class="antialiased bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 scroll-smooth">
+<noscript>
+  <div class="p-4 bg-yellow-200 text-yellow-800">
+    Пожалуйста, включите JavaScript для корректной работы приложения.
+  </div>
+</noscript>
+
+<script>
+  function toggleDarkMode() {
+    document.documentElement.classList.toggle('dark');
+    localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  }
+  if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  }
+</script>
+
+<header class="fixed inset-x-0 top-0 z-30 backdrop-blur-md bg-white/60 dark:bg-gray-800/60 border-b border-gray-200 dark:border-gray-700">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="#" class="font-display text-2xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
+      EduManager
+    </a>
+    <nav class="hidden md:flex space-x-6">
+      <a href="demo.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Демо</a>
+      <a href="journal.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Журнал</a>
+      <a href="messages.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Сообщения</a>
+      <a href="calendar.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Календарь</a>
+      <a href="newspaper.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Газета</a>
+      <a href="for-parents.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Родителям</a>
+      <a href="chat.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Чат</a>
+      <a href="support.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Поддержка</a>
+      <a href="schedule.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Расписание</a>
+      <a href="login.html" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">Вход</a>
+    </nav>
+    <button onclick="toggleDarkMode()" aria-label="Toggle dark mode" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1M16.95 7.05l-.7.7M7.05 16.95l-.7.7M16.95 16.95l-.7-.7M7.05 7.05l-.7-.7" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="pt-24">
+  <section class="container mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fadeUp">
+    <h1 class="text-3xl font-display font-bold mb-6">Демонстрационная панель</h1>
+    <p class="mb-8 text-gray-700 dark:text-gray-300">Нажмите на любой раздел ниже, чтобы увидеть его в действии.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <a href="journal.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Журнал</a>
+      <a href="messages.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Сообщения</a>
+      <a href="calendar.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Календарь</a>
+      <a href="newspaper.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Газета</a>
+      <a href="for-parents.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Родителям</a>
+      <a href="chat.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Чат</a>
+      <a href="support.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Поддержка</a>
+      <a href="schedule.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Расписание</a>
+      <a href="login.html" class="block p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-102 transition duration-300 ease-in-out">Вход</a>
+    </div>
+  </section>
+</main>
+
+<footer class="mt-24 py-8 bg-gray-50 dark:bg-gray-800">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500 dark:text-gray-400">
+    © 2026 EduManager. Все права защищены.
+  </div>
+</footer>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['Playfair Display', 'serif'],
+          body: ['Inter', 'sans-serif'],
+        },
+        keyframes: {
+          fadeUp: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+        },
+        animation: {
+          fadeUp: 'fadeUp 0.6s ease-out forwards',
+        },
+      },
+    },
+  };
+</script>
+</body>
+</html>
