@@ -1,29 +1,25 @@
 import { useMemo, useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import {
   useStudents,
   useDeleteStudent,
   usePromoteClass,
 } from "../hooks/useStudents";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Select } from "../components/ui/Select";
+import { Badge } from "../components/ui/Badge";
+import { Card } from "../components/ui/Card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHeadCell,
+} from "../components/ui/Table";
 import type { StudentFilter } from "../types";
 
 const defaultFilter: StudentFilter = {
@@ -91,159 +87,277 @@ export const StudentsPage: React.FC = () => {
     all: "все",
   };
 
-  if (isLoading) return <CircularProgress />;
+  const statusVariants = {
+    active: "success",
+    transferred: "warning",
+    expelled: "error",
+    archived: "default",
+  } as Record<string, any>;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lavender-500"></div>
+      </div>
+    );
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          gap: 1,
-          flexWrap: "wrap",
-          alignItems: "center",
-          mb: 2,
-        }}
-      >
-        <Typography variant="h4" component="h2">
-          Учащиеся
-        </Typography>
-        <Button variant="contained" component={RouterLink} to="/students/new">
-          + Добавить
+    <motion.div
+      className="space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Header */}
+      <motion.div variants={itemVariants} className="space-y-2">
+        <h1 className="text-4xl font-serif font-bold text-gray-900 dark:text-white">
+          📚 Управление учащимися
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Всего учащихся:{" "}
+          <span className="font-semibold text-lavender-600 dark:text-lavender-400">
+            {filtered.length}
+          </span>
+        </p>
+      </motion.div>
+
+      {/* Action Buttons */}
+      <motion.div variants={itemVariants} className="flex gap-3 flex-wrap">
+        <Button
+          variant="primary"
+          onClick={() => navigate("/students/new")}
+          className="gap-2"
+        >
+          ➕ Добавить ученика
         </Button>
         <Button
-          variant="outlined"
+          variant="secondary"
           onClick={() => exportExcel(filtered)}
           disabled={!filtered.length}
+          className="gap-2"
         >
-          ⬇ Экспорт Excel
+          ⬇️ Экспорт Excel
         </Button>
-      </Box>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr 180px 180px",
-          gap: 16,
-          mb: 2,
-        }}
-      >
-        <TextField
-          label="Поиск ФИО / контакт"
-          value={filter.query}
-          onChange={(e) => saveFilter({ ...filter, query: e.target.value })}
-        />
-        <FormControl>
-          <InputLabel>Класс</InputLabel>
-          <Select
-            value={filter.className}
-            label="Класс"
-            onChange={(e) =>
-              saveFilter({ ...filter, className: e.target.value })
-            }
-          >
-            <MenuItem value="all">все</MenuItem>
-            {uniqueClasses.map((className) => (
-              <MenuItem key={className} value={className}>
-                {className}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel>Статус</InputLabel>
-          <Select
-            value={filter.status}
-            label="Статус"
-            onChange={(e) =>
-              saveFilter({
-                ...filter,
-                status: e.target.value as StudentFilter["status"] | "all",
+        {user?.role === "director" && (
+          <Button
+            variant="secondary"
+            onClick={() =>
+              promoteMutation.mutate({
+                from: "9А",
+                to: "10А",
+                actor: user?.name ?? "system",
               })
             }
+            className="gap-2"
           >
-            {Object.entries(statusLabels).map(([key, label]) => (
-              <MenuItem key={key} value={key}>
-                {label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-      <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
-        <Button
-          variant="contained"
-          onClick={() =>
-            promoteMutation.mutate({
-              from: "9А",
-              to: "10А",
-              actor: user?.name ?? "system",
+            📤 Перевести 9А → 10А
+          </Button>
+        )}
+      </motion.div>
+
+      {/* Filters Section */}
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+      >
+        <Input
+          label="🔍 Поиск"
+          placeholder="ФИО или контакт родителя"
+          value={filter.query}
+          onChange={(e) => saveFilter({ ...filter, query: e.target.value })}
+          className="w-full"
+        />
+        <Select
+          label="📋 Класс"
+          value={filter.className}
+          onChange={(e) => saveFilter({ ...filter, className: e.target.value })}
+        >
+          <option value="all">Все классы</option>
+          {uniqueClasses.map((className) => (
+            <option key={className} value={className}>
+              {className}
+            </option>
+          ))}
+        </Select>
+        <Select
+          label="🏷️ Статус"
+          value={filter.status}
+          onChange={(e) =>
+            saveFilter({
+              ...filter,
+              status: e.target.value as StudentFilter["status"] | "all",
             })
           }
         >
-          Перевести 9А → 10А
-        </Button>
-      </Box>
-      <TableContainer
-        component={Paper}
-        role="region"
-        aria-label="Список учащихся"
+          {Object.entries(statusLabels).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
+        </Select>
+      </motion.div>
+
+      {/* Table Card */}
+      <motion.div variants={itemVariants} className="overflow-hidden">
+        <Card variant="default">
+          {filtered.length > 0 ? (
+            <div className="overflow-x-auto">
+              <Table variant="striped">
+                <TableHeader>
+                  <TableRow className="bg-gradient-to-r from-lavender-100 to-purple-100 dark:from-gray-800 dark:to-gray-700">
+                    <TableHeadCell className="text-gray-700 dark:text-gray-300 font-semibold">
+                      ФИО
+                    </TableHeadCell>
+                    <TableHeadCell className="text-gray-700 dark:text-gray-300 font-semibold">
+                      Класс
+                    </TableHeadCell>
+                    <TableHeadCell className="text-gray-700 dark:text-gray-300 font-semibold">
+                      Статус
+                    </TableHeadCell>
+                    <TableHeadCell className="text-gray-700 dark:text-gray-300 font-semibold">
+                      Дата поступления
+                    </TableHeadCell>
+                    <TableHeadCell className="text-gray-700 dark:text-gray-300 font-semibold">
+                      Родитель
+                    </TableHeadCell>
+                    <TableHeadCell className="text-gray-700 dark:text-gray-300 font-semibold">
+                      Действия
+                    </TableHeadCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((student, idx) => (
+                    <motion.tr
+                      key={student.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="hover:bg-lavender-50 dark:hover:bg-gray-700/50 transition-colors"
+                    >
+                      <TableCell className="font-medium text-gray-900 dark:text-gray-100">
+                        {student.fullName}
+                      </TableCell>
+                      <TableCell className="text-gray-700 dark:text-gray-300">
+                        {student.className}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={statusVariants[student.status] || "default"}
+                        >
+                          {statusLabels[student.status]}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-700 dark:text-gray-300">
+                        {student.enrollmentDate}
+                      </TableCell>
+                      <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                        {student.parentContacts}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2 flex-wrap">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => navigate(`/students/${student.id}`)}
+                            className="px-3 py-1 rounded-lg text-xs font-medium bg-lavender-100 dark:bg-lavender-900 text-lavender-700 dark:text-lavender-200 hover:bg-lavender-200 dark:hover:bg-lavender-800 transition-colors"
+                          >
+                            Просмотр
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() =>
+                              navigate(`/students/${student.id}/edit`)
+                            }
+                            className="px-3 py-1 rounded-lg text-xs font-medium bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-200 hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors"
+                          >
+                            Редакт.
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() =>
+                              deleteMutation.mutate({
+                                studentId: student.id,
+                                actor: user?.name ?? "system",
+                              })
+                            }
+                            className="px-3 py-1 rounded-lg text-xs font-medium bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                          >
+                            Удалить
+                          </motion.button>
+                        </div>
+                      </TableCell>
+                    </motion.tr>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="py-12 text-center">
+              <p className="text-lg text-gray-500 dark:text-gray-400">
+                😴 Ничего не найдено
+              </p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                Попробуй изменить фильтры
+              </p>
+            </div>
+          )}
+        </Card>
+      </motion.div>
+
+      {/* Stats Footer */}
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
       >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ФИО</TableCell>
-              <TableCell>Класс</TableCell>
-              <TableCell>Статус</TableCell>
-              <TableCell>Дата поступления</TableCell>
-              <TableCell>Родитель</TableCell>
-              <TableCell>Действия</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filtered.map((student) => (
-              <TableRow key={student.id} hover>
-                <TableCell>{student.fullName}</TableCell>
-                <TableCell>{student.className}</TableCell>
-                <TableCell>{statusLabels[student.status]}</TableCell>
-                <TableCell>{student.enrollmentDate}</TableCell>
-                <TableCell>{student.parentContacts}</TableCell>
-                <TableCell>
-                  <Button
-                    size="small"
-                    onClick={() => navigate(`/students/${student.id}`)}
-                  >
-                    Просмотр
-                  </Button>
-                  <Button
-                    size="small"
-                    onClick={() => navigate(`/students/${student.id}/edit`)}
-                  >
-                    Редактировать
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    onClick={() =>
-                      deleteMutation.mutate({
-                        studentId: student.id,
-                        actor: user?.name ?? "system",
-                      })
-                    }
-                  >
-                    Удалить
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-            {!filtered.length && (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  Ничего не найдено
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+        <Card variant="glass" className="text-center p-4">
+          <p className="text-2xl font-bold text-lavender-600 dark:text-lavender-400">
+            {filtered.length}
+          </p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+            Найдено учащихся
+          </p>
+        </Card>
+        <Card variant="glass" className="text-center p-4">
+          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+            {filtered.filter((s) => s.status === "active").length}
+          </p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+            Активных
+          </p>
+        </Card>
+        <Card variant="glass" className="text-center p-4">
+          <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+            {filtered.filter((s) => s.status === "transferred").length}
+          </p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+            Переведённых
+          </p>
+        </Card>
+        <Card variant="glass" className="text-center p-4">
+          <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+            {filtered.filter((s) => s.status === "expelled").length}
+          </p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+            Отчисленных
+          </p>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 };
