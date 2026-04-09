@@ -1,50 +1,59 @@
-* {
-  box-sizing: border-box;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-lavender-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100;
+    @apply font-sans transition-colors duration-300;
+  }
+
+  a {
+    @apply text-lavender-600 dark:text-lavender-300 hover:text-lavender-700 dark:hover:text-lavender-200;
+    @apply transition-colors duration-200;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif font-bold text-gray-900 dark:text-white;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
 }
 
-html,
-body,
-#root {
-  margin: 0;
-  min-height: 100%;
-}
+@layer components {
+  .glass {
+    @apply backdrop-blur-md bg-white/30 dark:bg-gray-900/30 border border-white/20 dark:border-gray-700/20;
+  }
 
-body {
-  margin: 0;
-  font-family: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  margin: 0;
-}
-
-code {
-  font-family: var(--mono);
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+  .gradient-lavender {
+    @apply bg-gradient-to-br from-lavender-400 to-lavender-600 dark:from-lavender-500 dark:to-lavender-800;
+  }
 }
