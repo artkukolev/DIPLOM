@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import {
   useStudents,
+  useGroups,
   useDeleteStudent,
   usePromoteClass,
 } from "../hooks/useStudents";
@@ -25,7 +26,11 @@ import type { StudentFilter } from "../types";
 const defaultFilter: StudentFilter = {
   query: "",
   className: "all",
+  groupId: "all",
   status: "all",
+  specialNeeds: "all",
+  benefits: "all",
+  competency: "",
 };
 
 const exportExcel = (data: any[]) => {
@@ -44,6 +49,7 @@ const exportExcel = (data: any[]) => {
 
 export const StudentsPage: React.FC = () => {
   const { data, isLoading } = useStudents();
+  const { data: groups } = useGroups();
   const user = useAuthStore((s) => s.user);
   const deleteMutation = useDeleteStudent();
   const promoteMutation = usePromoteClass();
@@ -57,15 +63,45 @@ export const StudentsPage: React.FC = () => {
   const filtered = useMemo(() => {
     if (!data) return [];
     return data.filter((student) => {
+      const query = filter.query.toLowerCase();
       const byQuery = filter.query
-        ? student.fullName.toLowerCase().includes(filter.query.toLowerCase()) ||
-          student.parentContacts.includes(filter.query)
+        ? student.fullName.toLowerCase().includes(query) ||
+          student.parentContacts.toLowerCase().includes(query) ||
+          student.competencies.some((skill) =>
+            skill.toLowerCase().includes(query),
+          )
         : true;
       const byClass =
         filter.className === "all" || student.className === filter.className;
+      const byGroup =
+        filter.groupId === "all" || student.groupId === filter.groupId;
       const byStatus =
         filter.status === "all" || student.status === filter.status;
-      return byQuery && byClass && byStatus;
+      const byNeeds =
+        filter.specialNeeds === "all" ||
+        (filter.specialNeeds === "yes" && student.specialNeeds !== "нет") ||
+        (filter.specialNeeds === "no" && student.specialNeeds === "нет");
+      const byBenefits =
+        filter.benefits === "all" ||
+        (filter.benefits === "yes" && student.benefits !== "нет") ||
+        (filter.benefits === "no" && student.benefits === "нет");
+      const byCompetency = filter.competency
+        ? student.competencies.some((skill) =>
+            skill
+              .toLowerCase()
+              .includes(filter.competency?.toLowerCase() ?? ""),
+          )
+        : true;
+
+      return (
+        byQuery &&
+        byClass &&
+        byGroup &&
+        byStatus &&
+        byNeeds &&
+        byBenefits &&
+        byCompetency
+      );
     });
   }, [data, filter]);
 
@@ -73,6 +109,8 @@ export const StudentsPage: React.FC = () => {
     () => Array.from(new Set(data?.map((s) => s.className) ?? [])),
     [data],
   );
+
+  const uniqueGroups = useMemo(() => groups ?? [], [groups]);
 
   const saveFilter = (newFilter: StudentFilter) => {
     setFilter(newFilter);
@@ -172,11 +210,11 @@ export const StudentsPage: React.FC = () => {
       {/* Filters Section */}
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4"
       >
         <Input
           label="🔍 Поиск"
-          placeholder="ФИО или контакт родителя"
+          placeholder="ФИО, контакт родителя или компетенция"
           value={filter.query}
           onChange={(e) => saveFilter({ ...filter, query: e.target.value })}
           className="w-full"
@@ -194,7 +232,19 @@ export const StudentsPage: React.FC = () => {
           ))}
         </Select>
         <Select
-          label="🏷️ Статус"
+          label="👥 Группа"
+          value={filter.groupId}
+          onChange={(e) => saveFilter({ ...filter, groupId: e.target.value })}
+        >
+          <option value="all">Все группы</option>
+          {uniqueGroups.map((group) => (
+            <option key={group.id} value={group.id}>
+              {group.name}
+            </option>
+          ))}
+        </Select>
+        <Select
+          label="📛 Статус"
           value={filter.status}
           onChange={(e) =>
             saveFilter({
@@ -209,6 +259,43 @@ export const StudentsPage: React.FC = () => {
             </option>
           ))}
         </Select>
+        <Select
+          label="⚕️ ОВЗ"
+          value={filter.specialNeeds}
+          onChange={(e) =>
+            saveFilter({
+              ...filter,
+              specialNeeds: e.target.value as StudentFilter["specialNeeds"],
+            })
+          }
+        >
+          <option value="all">Любой</option>
+          <option value="yes">Есть</option>
+          <option value="no">Нет</option>
+        </Select>
+        <Select
+          label="🎗️ Льготы"
+          value={filter.benefits}
+          onChange={(e) =>
+            saveFilter({
+              ...filter,
+              benefits: e.target.value as StudentFilter["benefits"],
+            })
+          }
+        >
+          <option value="all">Любой</option>
+          <option value="yes">Есть</option>
+          <option value="no">Нет</option>
+        </Select>
+        <Input
+          label="🏅 Компетенция"
+          placeholder="Ищем по навыку"
+          value={filter.competency}
+          onChange={(e) =>
+            saveFilter({ ...filter, competency: e.target.value })
+          }
+          className="w-full"
+        />
       </motion.div>
 
       {/* Table Card */}

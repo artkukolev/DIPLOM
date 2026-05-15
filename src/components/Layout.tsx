@@ -18,6 +18,8 @@ import {
   History as HistoryIcon,
   Logout as LogoutIcon,
   Person as PersonIcon,
+  Notifications as NotificationsIcon,
+  Article as ArticleIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
 import type { ReactNode } from "react";
@@ -29,6 +31,13 @@ const drawerWidth = 280;
 const navItems = [
   { label: "Дашборд", to: "/", icon: <DashboardIcon /> },
   { label: "Учащиеся", to: "/students", icon: <PeopleIcon /> },
+  { label: "Уведомления", to: "/notifications", icon: <NotificationsIcon /> },
+  {
+    label: "Отчёты",
+    to: "/reports",
+    icon: <ArticleIcon />,
+    roles: ["admin", "director", "tutor", "headTeacher", "secretary"],
+  },
   { label: "История", to: "/audit", icon: <HistoryIcon /> },
   { label: "Профиль", to: "/profile", icon: <PersonIcon /> },
 ];
@@ -73,30 +82,34 @@ export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
       </Toolbar>
       <Divider />
       <List sx={{ flexGrow: 1, px: 1 }}>
-        {navItems.map((nav) => (
-          <ListItemButton
-            key={nav.label}
-            component={RouterLink}
-            to={nav.to}
-            onClick={() => setMobileOpen(false)}
-            sx={{
-              borderRadius: 3,
-              mb: 1,
-              transition: "all 0.3s ease",
-              "&:hover": {
-                backgroundColor: "rgba(25, 118, 210, 0.1)",
-                transform: "translateX(4px)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-              },
-            }}
-          >
-            <ListItemIcon sx={{ color: "#1976d2" }}>{nav.icon}</ListItemIcon>
-            <ListItemText
-              primary={nav.label}
-              sx={{ "& .MuiTypography-root": { fontWeight: 500 } }}
-            />
-          </ListItemButton>
-        ))}
+        {navItems
+          .filter(
+            (nav) => !nav.roles || nav.roles.includes(user?.role ?? "admin"),
+          )
+          .map((nav) => (
+            <ListItemButton
+              key={nav.label}
+              component={RouterLink}
+              to={nav.to}
+              onClick={() => setMobileOpen(false)}
+              sx={{
+                borderRadius: 3,
+                mb: 1,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  backgroundColor: "rgba(25, 118, 210, 0.1)",
+                  transform: "translateX(4px)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: "#1976d2" }}>{nav.icon}</ListItemIcon>
+              <ListItemText
+                primary={nav.label}
+                sx={{ "& .MuiTypography-root": { fontWeight: 500 } }}
+              />
+            </ListItemButton>
+          ))}
       </List>
       <Divider />
       <List sx={{ px: 1 }}>

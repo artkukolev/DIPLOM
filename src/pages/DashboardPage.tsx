@@ -1,20 +1,24 @@
 import { useMemo } from "react";
 import { Box, Button, Card, CardContent, Typography } from "@mui/material";
-import { useStudents } from "../hooks/useStudents";
+import { useGroups, useNotifications, useStudents } from "../hooks/useStudents";
 
 export const DashboardPage: React.FC = () => {
-  const { data, isLoading } = useStudents();
+  const { data: students, isLoading } = useStudents();
+  const { data: groups } = useGroups();
+  const { data: notifications } = useNotifications();
 
   const stats = useMemo(() => {
-    const total = data?.length ?? 0;
+    const total = students?.length ?? 0;
     const byStatus =
-      data?.reduce<Record<string, number>>((acc, student) => {
+      students?.reduce<Record<string, number>>((acc, student) => {
         acc[student.status] = (acc[student.status] || 0) + 1;
         return acc;
       }, {}) ?? {};
-    const classes = new Set(data?.map((s) => s.className) ?? []);
-    return { total, byStatus, classCount: classes.size };
-  }, [data]);
+    const classes = new Set(students?.map((s) => s.className) ?? []);
+    const withNeeds =
+      students?.filter((s) => s.specialNeeds !== "нет").length ?? 0;
+    return { total, byStatus, classCount: classes.size, withNeeds };
+  }, [students]);
 
   if (isLoading) return <Typography>Загрузка...</Typography>;
 
@@ -25,7 +29,7 @@ export const DashboardPage: React.FC = () => {
           Добро пожаловать в SchoolPlus
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Управление личными делами учеников за 1-2 клика.
+          Управление личными делами учащихся в одном современном дашборде.
         </Typography>
       </Box>
 
@@ -37,28 +41,28 @@ export const DashboardPage: React.FC = () => {
           mb: 3,
         }}
       >
-        <Card sx={{ p: 2, border: "1px solid rgba(30, 64, 175, .12)" }}>
-          <Typography variant="subtitle1" mb={1} color="text.secondary">
+        <Card sx={{ p: 3, border: "1px solid rgba(30, 64, 175, .12)" }}>
+          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
             Всего учеников
           </Typography>
           <Typography variant="h2" color="primary">
             {stats.total}
           </Typography>
         </Card>
-        <Card sx={{ p: 2, border: "1px solid rgba(21, 128, 61, .12)" }}>
-          <Typography variant="subtitle1" mb={1} color="text.secondary">
-            Классов
+        <Card sx={{ p: 3, border: "1px solid rgba(21, 128, 61, .12)" }}>
+          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+            Классов / групп
           </Typography>
           <Typography variant="h2" color="success.main">
-            {stats.classCount}
+            {groups?.length ?? 0}
           </Typography>
         </Card>
-        <Card sx={{ p: 2, border: "1px solid rgba(237, 135, 45, .12)" }}>
-          <Typography variant="subtitle1" mb={1} color="text.secondary">
-            Активные
+        <Card sx={{ p: 3, border: "1px solid rgba(237, 135, 45, .12)" }}>
+          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+            Ученики с ОВЗ
           </Typography>
-          <Typography variant="h2" color="info.main">
-            {stats.byStatus.active ?? 0}
+          <Typography variant="h2" color="warning.main">
+            {stats.withNeeds}
           </Typography>
         </Card>
       </Box>
@@ -68,7 +72,7 @@ export const DashboardPage: React.FC = () => {
           <Typography variant="h6" mb={2}>
             Быстрые действия
           </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             <Button
               variant="contained"
               color="primary"
@@ -79,16 +83,16 @@ export const DashboardPage: React.FC = () => {
             <Button
               variant="outlined"
               color="info"
-              onClick={() => window.location.assign("/students")}
+              onClick={() => window.location.assign("/notifications")}
             >
-              Перейти в список
+              Уведомления
             </Button>
             <Button
               variant="outlined"
-              color="success"
-              onClick={() => window.location.assign("/audit")}
+              color="secondary"
+              onClick={() => window.location.assign("/reports")}
             >
-              История изменений
+              Отчёты
             </Button>
           </Box>
         </CardContent>
@@ -99,7 +103,7 @@ export const DashboardPage: React.FC = () => {
           <Typography variant="h6" mb={2}>
             Статусы по классам
           </Typography>
-          <Box sx={{ display: "grid", gridTemplateColumns: "1fr", gap: 1 }}>
+          <Box sx={{ display: "grid", gap: 1 }}>
             {Object.entries(stats.byStatus).map(([status, count]) => (
               <Typography key={status} sx={{ fontWeight: 500 }}>
                 {status}: {count}
@@ -107,6 +111,16 @@ export const DashboardPage: React.FC = () => {
             ))}
           </Box>
         </CardContent>
+      </Card>
+
+      <Card sx={{ mt: 3, p: 3 }}>
+        <Typography variant="h6" mb={2}>
+          Сервисы уведомлений
+        </Typography>
+        <Typography color="text.secondary">
+          Всего уведомлений: {notifications?.length ?? 0}. Перейдите в раздел
+          уведомлений для обработки новых сообщений.
+        </Typography>
       </Card>
     </Box>
   );

@@ -11,7 +11,13 @@ import { useTheme } from "../context/ThemeContext";
 const DEMO_ROLES = [
   { email: "admin@example.com", label: "Администратор", icon: "⚙️" },
   { email: "director@example.com", label: "Директор", icon: "👔" },
-  { email: "teacher@example.com", label: "Учитель", icon: "📚" },
+  { email: "tutor@example.com", label: "Тьютор", icon: "🧑‍🏫" },
+  {
+    email: "headteacher@example.com",
+    label: "Классный руководитель",
+    icon: "🏫",
+  },
+  { email: "teacher@example.com", label: "Преподаватель", icon: "📚" },
   { email: "secretary@example.com", label: "Секретарь", icon: "📋" },
   { email: "parent@example.com", label: "Родитель", icon: "👨‍👩‍👧" },
   { email: "student@example.com", label: "Ученик", icon: "👨‍🎓" },

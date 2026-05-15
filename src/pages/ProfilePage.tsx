@@ -18,6 +18,8 @@ export const ProfilePage: React.FC = () => {
   const roleEmoji = {
     director: "👔",
     admin: "⚙️",
+    tutor: "🧑‍🏫",
+    headTeacher: "🏫",
     secretary: "📋",
     teacher: "📚",
     parent: "👨‍👩‍👧",
@@ -27,6 +29,8 @@ export const ProfilePage: React.FC = () => {
   const roleLabels = {
     director: "Директор",
     admin: "Администратор",
+    tutor: "Тьютор",
+    headTeacher: "Классный руководитель",
     secretary: "Секретарь",
     teacher: "Учитель",
     parent: "Родитель",
