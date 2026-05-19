@@ -23,12 +23,12 @@ export const DashboardPage: React.FC = () => {
   if (isLoading) return <Typography>Загрузка...</Typography>;
 
   return (
-    <Box>
+    <Box sx={{ color: "#e2e8f0" }}>
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" fontWeight={700}>
+        <Typography variant="h4" fontWeight={700} color="#f8fafc">
           Добро пожаловать в SchoolPlus
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="#cbd5e1">
           Управление личными делами учащихся в одном современном дашборде.
         </Typography>
       </Box>
@@ -41,35 +41,59 @@ export const DashboardPage: React.FC = () => {
           mb: 3,
         }}
       >
-        <Card sx={{ p: 3, border: "1px solid rgba(30, 64, 175, .12)" }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+        <Card
+          sx={{
+            p: 3,
+            backgroundColor: "#111827",
+            border: "1px solid rgba(148,163,184,0.16)",
+          }}
+        >
+          <Typography variant="subtitle2" color="#94a3b8" gutterBottom>
             Всего учеников
           </Typography>
-          <Typography variant="h2" color="primary">
+          <Typography variant="h2" color="#e0e7ff">
             {stats.total}
           </Typography>
         </Card>
-        <Card sx={{ p: 3, border: "1px solid rgba(21, 128, 61, .12)" }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+        <Card
+          sx={{
+            p: 3,
+            backgroundColor: "#111827",
+            border: "1px solid rgba(148,163,184,0.16)",
+          }}
+        >
+          <Typography variant="subtitle2" color="#94a3b8" gutterBottom>
             Классов / групп
           </Typography>
-          <Typography variant="h2" color="success.main">
+          <Typography variant="h2" color="#34d399">
             {groups?.length ?? 0}
           </Typography>
         </Card>
-        <Card sx={{ p: 3, border: "1px solid rgba(237, 135, 45, .12)" }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+        <Card
+          sx={{
+            p: 3,
+            backgroundColor: "#111827",
+            border: "1px solid rgba(148,163,184,0.16)",
+          }}
+        >
+          <Typography variant="subtitle2" color="#94a3b8" gutterBottom>
             Ученики с ОВЗ
           </Typography>
-          <Typography variant="h2" color="warning.main">
+          <Typography variant="h2" color="#f59e0b">
             {stats.withNeeds}
           </Typography>
         </Card>
       </Box>
 
-      <Card sx={{ mb: 3 }}>
+      <Card
+        sx={{
+          mb: 3,
+          backgroundColor: "#111827",
+          border: "1px solid rgba(148,163,184,0.16)",
+        }}
+      >
         <CardContent>
-          <Typography variant="h6" mb={2}>
+          <Typography variant="h6" mb={2} color="#f8fafc">
             Быстрые действия
           </Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
@@ -98,14 +122,22 @@ export const DashboardPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card
+        sx={{
+          backgroundColor: "#111827",
+          border: "1px solid rgba(148,163,184,0.16)",
+        }}
+      >
         <CardContent>
-          <Typography variant="h6" mb={2}>
+          <Typography variant="h6" mb={2} color="#f8fafc">
             Статусы по классам
           </Typography>
           <Box sx={{ display: "grid", gap: 1 }}>
             {Object.entries(stats.byStatus).map(([status, count]) => (
-              <Typography key={status} sx={{ fontWeight: 500 }}>
+              <Typography
+                key={status}
+                sx={{ fontWeight: 500, color: "#e2e8f0" }}
+              >
                 {status}: {count}
               </Typography>
             ))}
@@ -113,11 +145,18 @@ export const DashboardPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card sx={{ mt: 3, p: 3 }}>
-        <Typography variant="h6" mb={2}>
+      <Card
+        sx={{
+          mt: 3,
+          p: 3,
+          backgroundColor: "#111827",
+          border: "1px solid rgba(148,163,184,0.16)",
+        }}
+      >
+        <Typography variant="h6" mb={2} color="#f8fafc">
           Сервисы уведомлений
         </Typography>
-        <Typography color="text.secondary">
+        <Typography color="#cbd5e1">
           Всего уведомлений: {notifications?.length ?? 0}. Перейдите в раздел
           уведомлений для обработки новых сообщений.
         </Typography>

@@ -61,14 +61,15 @@ export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
     <Box
       sx={{
         height: "100%",
-        background: "linear-gradient(180deg, #e3f2fd 0%, #b2dfdb 100%)",
+        background: "linear-gradient(180deg, #0f172a 0%, #111827 100%)",
+        color: "#e2e8f0",
         display: "flex",
         flexDirection: "column",
       }}
     >
       <Toolbar
         sx={{
-          background: "linear-gradient(90deg, #1976d2 0%, #26a69a 100%)",
+          background: "linear-gradient(90deg, #4f46e5 0%, #0f172a 100%)",
           color: "white",
         }}
       >
@@ -103,7 +104,7 @@ export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
                 },
               }}
             >
-              <ListItemIcon sx={{ color: "#1976d2" }}>{nav.icon}</ListItemIcon>
+              <ListItemIcon sx={{ color: "#c7d2fe" }}>{nav.icon}</ListItemIcon>
               <ListItemText
                 primary={nav.label}
                 sx={{ "& .MuiTypography-root": { fontWeight: 500 } }}
@@ -149,8 +150,9 @@ export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: "linear-gradient(90deg, #1976d2 0%, #26a69a 100%)",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          background: "linear-gradient(90deg, #0f172a 0%, #111827 100%)",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
+          borderBottom: "1px solid rgba(148,163,184,0.12)",
         }}
       >
         <Toolbar>
@@ -226,7 +228,8 @@ export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
           flexGrow: 1,
           p: 4,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          background: "transparent",
+          background: "linear-gradient(135deg, #020617 0%, #111827 100%)",
+          color: "#e2e8f0",
           minHeight: "100vh",
         }}
       >

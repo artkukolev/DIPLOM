@@ -1,16 +1,23 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { LoginPage } from "../pages/LoginPage";
+import { ThemeProvider } from "../context/ThemeContext";
 
 describe("LoginPage", () => {
-  it("renders login form", () => {
+  it("renders login demo cards and manual login option", () => {
     render(
-      <MemoryRouter>
-        <LoginPage />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter>
+          <LoginPage />
+        </MemoryRouter>
+      </ThemeProvider>,
     );
-    expect(screen.getByText("Вход в систему")).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: /email/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /войти/i })).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/выберите роль для демонстрации/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /вход с email/i }),
+    ).toBeInTheDocument();
   });
 });

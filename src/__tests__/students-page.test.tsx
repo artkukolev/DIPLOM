@@ -18,9 +18,11 @@ describe("StudentsPage", () => {
       </QueryClientProvider>,
     );
 
-    expect(await screen.findByText("Учащиеся")).toBeInTheDocument();
     expect(
-      screen.getByRole("textbox", { name: /фио \/ контакт/i }),
+      await screen.findByText(/управление учащимися/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/фио, контакт родителя или компетенция/i),
     ).toBeInTheDocument();
   });
 });
